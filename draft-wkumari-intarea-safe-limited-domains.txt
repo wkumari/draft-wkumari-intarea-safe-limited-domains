@@ -13,15 +13,12 @@ Expires: 11 July 2024
 
 Abstract
 
-   There is a noticeable trend towards network behaviors and semantics
-   that are specific to a particular set of requirements applied within
-   a limited region of the Internet (termed a "limited domain").  This
-   trend is reflected in drafts which describe protocols that are only
-   intended to be used within these "limited domains".  Unfortunately,
-   these drafts often do not clearly define how the boundary of the
-   limited domain is established and enforced, or require that operators
-   of these limited domains //perfectly// implement filters to protect
-   the rest of the Internet from these protocols.
+   There is a trend towards documents describing protocols that are only
+   intended to be used within "limited domains".  Unfortunately, these
+   drafts often do not clearly define how the boundary of the limited
+   domain is established and enforced, or require that operators of
+   these limited domains //perfectly// implement filters to protect the
+   rest of the Internet from these protocols.
 
    In addition, these protocols sometimes require that networks that are
    outside of (and unaffiliated with) the limited domain explicitly
@@ -97,10 +94,10 @@ Table of Contents
 
    In order to provide context, this document will quote extensively
    from [RFC8799], but it is expected (well, hoped!) that the reader
-   will actually read [RFC8799] in its entirety - it's not that long,
-   and is a very good read!
+   will actually read [RFC8799] in its entirety.  It's relatively short,
+   and it is a very good read!
 
-   [RFC8799] Section 3, notes that:
+   [RFC8799] Section 3, notes:
 
       A common argument is that if a protocol is intended for limited
       use, the chances are very high that it will in fact be used (or
