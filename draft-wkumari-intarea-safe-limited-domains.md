@@ -53,8 +53,6 @@ domain protocols that are safer to deploy.
 TODO Introduction
 
 
-
-
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
