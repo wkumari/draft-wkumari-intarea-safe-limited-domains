@@ -1190,12 +1190,20 @@ domain protocols that are safer to deploy.<a href="#section-abstract-3" class="p
 <p id="section-1-1"><span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span> discusses the concept of "limited domains", provides
 examples of limited domains, as well as Examples of Limited Domain Solutions, including Service Function Chaining (SFC), Segment Routing, "Creative uses of IPv6 features" (including Extension headers, e.g., for segment routing <span>[<a href="#RFC8754" class="cite xref">RFC8754</a>]</span>)<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">In order to provide context, this document will quote extensively from <span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span>, but it is expected (well, hoped!) that the reader will actually read <span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span> in its entirety - it's not that long, and is a very good read!<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3"><span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span> Section 3, notes that:
-&gt; A common argument is that if a protocol is intended for limited use, the chances are very high that it will in fact be used (or misused) in other scenarios including the so-called open Internet. This is undoubtedly true and means that limited use is not an excuse for bad design or poor security. In fact, a limited use requirement potentially adds complexity to both the protocol and its security design, as discussed later.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">Notably, in <span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span> Section 2, states:
-&gt; Domain boundaries that are defined administratively (e.g., by address filtering rules in routers) are prone to leakage caused by human error, especially if the limited domain traffic appears otherwise normal to the boundary routers. In this case, the network operator needs to take active steps to protect the boundary. This form of leakage is much less likely if nodes must be explicitly configured to handle a given limited-domain protocol, for example, by installing a specific protocol handler.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">This document addresses the problem of "leakage" of limited domain protocols by
-providing a mechanism so that nodes must be explicitly configured to handle the given limited-domain protocol ("fail-closed"), rather than relying on the network operator to take active steps to protect the boundary ("fail-open").<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-3"><span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span> Section 3, notes that:<a href="#section-1-3" class="pilcrow">¶</a></p>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-1-4.1">
+          <p id="section-1-4.1.1">A common argument is that if a protocol is intended for limited use, the chances are very high that it will in fact be used (or misused) in other scenarios including the so-called open Internet. This is undoubtedly true and means that limited use is not an excuse for bad design or poor security. In fact, a limited use requirement potentially adds complexity to both the protocol and its security design, as discussed later.<a href="#section-1-4.1.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-1-5">Notably, in <span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span> Section 2, states:<a href="#section-1-5" class="pilcrow">¶</a></p>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-1-6.1">
+          <p id="section-1-6.1.1">Domain boundaries that are defined administratively (e.g., by address filtering rules in routers) are prone to leakage caused by human error, especially if the limited domain traffic appears otherwise normal to the boundary routers. In this case, the network operator needs to take active steps to protect the boundary. This form of leakage is much less likely if nodes must be explicitly configured to handle a given limited-domain protocol, for example, by installing a specific protocol handler.<a href="#section-1-6.1.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-1-7">This document addresses the problem of "leakage" of limited domain protocols by
+providing a mechanism so that nodes must be explicitly configured to handle the given limited-domain protocol ("fail-closed"), rather than relying on the network operator to take active steps to protect the boundary ("fail-open").<a href="#section-1-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
