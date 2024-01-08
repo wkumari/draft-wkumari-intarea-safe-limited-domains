@@ -5,8 +5,8 @@ docname: draft-wkumari-intarea-safe-limited-domains-latest
 category: std
 
 ipr: trust200902
-area: General
-workgroup: INTAREA
+area: "Internet"
+workgroup: "Internet Area Working Group"
 keyword: Internet-Draft
 
 stand_alone: yes
