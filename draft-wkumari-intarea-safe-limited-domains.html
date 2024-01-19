@@ -6,6 +6,9 @@
 <meta content="initial-scale=1.0" name="viewport">
 <title>Safe(r) Limited Domains</title>
 <meta content="Warren Kumari" name="author">
+<meta content="Andrew Alston" name="author">
+<meta content="Éric Vyncke" name="author">
+<meta content="Suresh Krishnan" name="author">
 <meta content='
        There is a trend towards documents describing protocols that are only intended
 to be used within "limited domains". Unfortunately, these drafts often do not
@@ -20,11 +23,11 @@ domain.
 protocols and limited domains, and provides a mechanism for designing limited
 domain protocols that are safer to deploy. 
     ' name="description">
-<meta content="xml2rfc 3.19.0" name="generator">
+<meta content="xml2rfc 3.19.1" name="generator">
 <meta content="Internet-Draft" name="keyword">
 <meta content="draft-wkumari-intarea-safe-limited-domains-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.19.0
+  xml2rfc 3.19.1
     Python 3.11.6
     ConfigArgParse 1.7
     google-i18n-address 3.1.0
@@ -37,7 +40,7 @@ domain protocols that are safer to deploy.
     requests 2.31.0
     setuptools 68.2.2
     six 1.16.0
-    wcwidth 0.2.12
+    wcwidth 0.2.13
 -->
 <link href="draft-wkumari-intarea-safe-limited-domains.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1039,8 +1042,8 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <td class="right">January 2024</td>
 </tr></thead>
 <tfoot><tr>
-<td class="left">Kumari</td>
-<td class="center">Expires 19 July 2024</td>
+<td class="left">Kumari, et al.</td>
+<td class="center">Expires 22 July 2024</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1053,17 +1056,29 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-wkumari-intarea-safe-limited-domains-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-01-16" class="published">16 January 2024</time>
+<time datetime="2024-01-19" class="published">19 January 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-07-19">19 July 2024</time></dd>
-<dt class="label-authors">Author:</dt>
+<dd class="expires"><time datetime="2024-07-22">22 July 2024</time></dd>
+<dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
       <div class="author-name">W. Kumari</div>
 <div class="org">Google, LLC</div>
+</div>
+<div class="author">
+      <div class="author-name">A. Alston</div>
+<div class="org">Liquid Intelligent Technologies</div>
+</div>
+<div class="author">
+      <div class="author-name">É. Vyncke</div>
+<div class="org">Cisco</div>
+</div>
+<div class="author">
+      <div class="author-name">S. Krishnan</div>
+<div class="org">Cisco</div>
 </div>
 </dd>
 </dl>
@@ -1114,7 +1129,7 @@ domain protocols that are safer to deploy.<a href="#section-abstract-3" class="p
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 19 July 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 22 July 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1153,7 +1168,7 @@ domain protocols that are safer to deploy.<a href="#section-abstract-3" class="p
             <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-fail-open-versus-fail-close" class="internal xref">Fail-open versus Fail-closed</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
-            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-making-a-limited-domain-pro" class="internal xref">Making a limited-domain protocol fail-closed</a></p>
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-making-a-transport-type-lim" class="internal xref">Making a transport type limited-domain protocol fail-closed</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
             <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
@@ -1176,7 +1191,7 @@ domain protocols that are safer to deploy.<a href="#section-abstract-3" class="p
             <p id="section-toc.1-1.8.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+            <p id="section-toc.1-1.9.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1253,15 +1268,16 @@ application of filters. An example of a fail-open protocol is SRv6 - in order
 to ensure that SRv6 traffic does not leak out of a network, the operator must
 explicitly filter this traffic, and, in order to ensure that SRv6 traffic does
 not leak in, the operator must explicitly filter SRv6 traffic.<a href="#section-3-2" class="pilcrow">¶</a></p>
-<p id="section-3-3">Fail-open protocols are inherently less safe than fail-closed protocols; they
-rely on perfect configuration of filters on all interfaces at the boundary of a
-domain, and, if the filters are removed for any reason (for example, during
-troubleshooting), the network is at risk. In addition, devices (especially
-those using TCAM based filter mechanisms) may have limitation in the number and
-complexity of filters that can be applied, and adding new filter entries to
-protect against new protocols may not be possible.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-3">Fail-open protocols are inherently more risky than fail-closed protocols, as
+they may ignore operational realities; they rely on perfect configuration of
+filters on all interfaces at the boundary of a domain, and, if the filters are
+removed for any reason (for example, during troubleshooting), the network is at
+risk. In addition, devices (especially those using TCAM based filter
+mechanisms) may have limitations in the number and complexity of filters that
+can be applied, and so adding new filter entries to protect against new
+protocols may not be possible.<a href="#section-3-3" class="pilcrow">¶</a></p>
 <p id="section-3-4">Fail-closed protocols, on the other hand, do not require any explicit
-filtering - in order for the protocol to transit an interface, the operator must
+filtering. In order for the protocol to transit an interface, the operator must
 explicitly enable the protocol on that interface. In addition, the protocol is
 inherently more robust, as it does not rely on filters that may be limited in
 number and complexity. Finally, fail-closed protocols are inherently more
@@ -1270,30 +1286,32 @@ limited domain implement filters to protect their networks from the limited
 domain protocols.<a href="#section-3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="making-a-limited-domain-protocol-fail-closed">
+<div id="making-a-transport-type-limited-domain-protocol-fail-closed">
 <section id="section-4">
-      <h2 id="name-making-a-limited-domain-pro">
-<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-making-a-limited-domain-pro" class="section-name selfRef">Making a limited-domain protocol fail-closed</a>
+      <h2 id="name-making-a-transport-type-lim">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-making-a-transport-type-lim" class="section-name selfRef">Making a transport type limited-domain protocol fail-closed</a>
       </h2>
-<p id="section-4-1">In order to make a limited-domain protocol fail-closed is to assign it a unique
+<p id="section-4-1">One way to make a limited-domain protocol fail-closed is to assign it a unique
 EtherType (this is the mechanism used by MPLS). In modern router and hosts, if
 the protocol (and so its associated EtherType) is not enabled on an interface,
 then the Ethernet chipset will drop the frame, and the host will not see it.
 This is a very simple and effective mechanism to ensure that the protocol does
 not leak out of the limited domain.<a href="#section-4-1" class="pilcrow">¶</a></p>
-<p id="section-4-2">The EtherType is a 16-bit field in an Ethernet frame, and so it is a somewhat
-limited resource.<a href="#section-4-2" class="pilcrow">¶</a></p>
-<p id="section-4-3">Note that "Since EtherTypes are a fairly scarce resource, the IEEE RAC has let
+<p id="section-4-2">Note that this only works for transport-type limited domain protocols (e.g.,
+SRv6). Higher layer protocols cannot necessarily be protected in this way, and so cryptographically enforced mechanisms may need to be used instead (e.g as  done used by ANIMA in <span>[<a href="#RFC8994" class="cite xref">RFC8994</a>]</span> and <span>[<a href="#RFC8995" class="cite xref">RFC8995</a>]</span>).<a href="#section-4-2" class="pilcrow">¶</a></p>
+<p id="section-4-3">The EtherType is a 16-bit field in an Ethernet frame, and so it is a somewhat
+limited resource.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-4-4">Note that "Since EtherTypes are a fairly scarce resource, the IEEE RAC has let
    us know that they will not assign a new EtherType to a new IETF protocol
    specification until the IESG has approved the protocol specification for
    publication as an RFC.  In exceptional cases, the IEEE RA is willing to
    consider "early allocation" of an EtherType for an IETF protocol that is
    still under development as long as the request comes from and has been
    vetted by the IESG." (<span>[<a href="#I-D.ietf-intarea-rfc7042bis" class="cite xref">I-D.ietf-intarea-rfc7042bis</a>]</span> Appendix B.1, citing
-   <span>[<a href="#IESG_EtherType" class="cite xref">IESG_EtherType</a>]</span>)<a href="#section-4-3" class="pilcrow">¶</a></p>
-<p id="section-4-4">During development and testing, the protocol can use a "Local Experimental
+   <span>[<a href="#IESG_EtherType" class="cite xref">IESG_EtherType</a>]</span>)<a href="#section-4-4" class="pilcrow">¶</a></p>
+<p id="section-4-5">During development and testing, the protocol can use a "Local Experimental
 Ethertype" (0x88B5 and 0x88B6 - <span>[<a href="#IANA_EtherType" class="cite xref">IANA_EtherType</a>]</span>). Once the protocol is
-approved for publication, the IESG and request an EtherType from the IEEE.<a href="#section-4-4" class="pilcrow">¶</a></p>
+approved for publication, the IESG can request an EtherType from the IEEE.<a href="#section-4-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-considerations">
@@ -1360,8 +1378,16 @@ approved for publication, the IESG and request an EtherType from the IEEE.<a hre
 <span class="refAuthor">Rosen, E.</span>, <span class="refAuthor">Viswanathan, A.</span>, and <span class="refAuthor">R. Callon</span>, <span class="refTitle">"Multiprotocol Label Switching Architecture"</span>, <span class="seriesInfo">RFC 3031</span>, <span class="seriesInfo">DOI 10.17487/RFC3031</span>, <time datetime="2001-01" class="refDate">January 2001</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3031">https://www.rfc-editor.org/rfc/rfc3031</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8754">[RFC8754]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Filsfils, C., Ed.</span>, <span class="refAuthor">Dukes, D., Ed.</span>, <span class="refAuthor">Previdi, S.</span>, <span class="refAuthor">Leddy, J.</span>, <span class="refAuthor">Matsushima, S.</span>, and <span class="refAuthor">D. Voyer</span>, <span class="refTitle">"IPv6 Segment Routing Header (SRH)"</span>, <span class="seriesInfo">RFC 8754</span>, <span class="seriesInfo">DOI 10.17487/RFC8754</span>, <time datetime="2020-03" class="refDate">March 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8754">https://www.rfc-editor.org/rfc/rfc8754</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8994">[RFC8994]</dt>
+        <dd>
+<span class="refAuthor">Eckert, T., Ed.</span>, <span class="refAuthor">Behringer, M., Ed.</span>, and <span class="refAuthor">S. Bjarnason</span>, <span class="refTitle">"An Autonomic Control Plane (ACP)"</span>, <span class="seriesInfo">RFC 8994</span>, <span class="seriesInfo">DOI 10.17487/RFC8994</span>, <time datetime="2021-05" class="refDate">May 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8994">https://www.rfc-editor.org/rfc/rfc8994</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8995">[RFC8995]</dt>
+      <dd>
+<span class="refAuthor">Pritikin, M.</span>, <span class="refAuthor">Richardson, M.</span>, <span class="refAuthor">Eckert, T.</span>, <span class="refAuthor">Behringer, M.</span>, and <span class="refAuthor">K. Watsen</span>, <span class="refTitle">"Bootstrapping Remote Secure Key Infrastructure (BRSKI)"</span>, <span class="seriesInfo">RFC 8995</span>, <span class="seriesInfo">DOI 10.17487/RFC8995</span>, <time datetime="2021-05" class="refDate">May 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8995">https://www.rfc-editor.org/rfc/rfc8995</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
@@ -1372,13 +1398,23 @@ approved for publication, the IESG and request an EtherType from the IEEE.<a hre
       <h2 id="name-acknowledgments">
 <a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
       </h2>
-<p id="appendix-A-1">TODO acknowledge.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-1">We've been trying to reach you about your car's extended warranty.
+Please call us back at 1-800-555-1212.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-2">Much thanks to Brian Carpenter, for his review and comments.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
+<p id="appendix-A-3">Also much thanks to everyone else with whom we have discussed this topic; I've had numerous discussions with many many people on this, and I'm sure that I've forgotten some of them. Apologies if you were one of them.<a href="#appendix-A-3" class="pilcrow">¶</a></p>
+<p id="appendix-A-4"><strong>Author notes / reminders</strong>
+  To be removed before publication -- this is just a place for the authors to
+  keep notes to themselves.  Ideally these should be Github issues (or similar),
+  but Warren's ADD means he will get sidetracked if he has to open a browser every ti.. Hey! Look! A squirrel!
+  - We should discuss this proposal with Donald Eastlake (<span>[<a href="#I-D.ietf-intarea-rfc7042bis" class="cite xref">I-D.ietf-intarea-rfc7042bis</a>]</span>) and IEEE coordination.
+  - Reference Ravioli draft.
+  - Try and remember who all we've discussed this with, and thank them.<a href="#appendix-A-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">
 <section id="appendix-B">
-      <h2 id="name-authors-address">
-<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
       </h2>
 <address class="vcard">
         <div dir="auto" class="left"><span class="fn nameRole">Warren Kumari</span></div>
@@ -1386,6 +1422,30 @@ approved for publication, the IESG and request an EtherType from the IEEE.<a hre
 <div class="email">
 <span>Email:</span>
 <a href="mailto:warren@kumari.net" class="email">warren@kumari.net</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Andrew Alston</span></div>
+<div dir="auto" class="left"><span class="org">Liquid Intelligent Technologies</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:andrew-ietf@liquid.tech" class="email">andrew-ietf@liquid.tech</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Éric Vyncke</span></div>
+<div dir="auto" class="left"><span class="org">Cisco</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:evyncke@cisco.com" class="email">evyncke@cisco.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Suresh Krishnan</span></div>
+<div dir="auto" class="left"><span class="org">Cisco</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:suresh.krishnan@gmail.com" class="email">suresh.krishnan@gmail.com</a>
 </div>
 </address>
 </section>
