@@ -15,15 +15,32 @@ smart_quotes: no
 pi: [toc, sortrefs, symrefs]
 
 author:
- -
+  -
     ins: W. Kumari
     name: Warren Kumari
     organization: Google, LLC
     email: warren@kumari.net
+  -
+    ins: A. Alston
+    name: Andrew Alston
+    organization: Liquid Intelligent Technologies
+    email: andrew-ietf@liquid.tech
+  -
+    ins: É. Vyncke
+    name: Éric Vyncke
+    organization: Cisco
+    email: evyncke@cisco.com
+  -
+    ins: S. Krishnan
+    name: Suresh Krishnan
+    organization: Cisco
+    email: suresh.krishnan@gmail.com
 
 normative:
   RFC8799:
 informative:
+  RFC8994:
+  RFC8995:
   RFC8754:
   RFC3031:
   I-D.ietf-intarea-rfc7042bis:
@@ -119,16 +136,17 @@ to ensure that SRv6 traffic does not leak out of a network, the operator must
 explicitly filter this traffic, and, in order to ensure that SRv6 traffic does
 not leak in, the operator must explicitly filter SRv6 traffic.
 
-Fail-open protocols are inherently less safe than fail-closed protocols; they
-rely on perfect configuration of filters on all interfaces at the boundary of a
-domain, and, if the filters are removed for any reason (for example, during
-troubleshooting), the network is at risk. In addition, devices (especially
-those using TCAM based filter mechanisms) may have limitation in the number and
-complexity of filters that can be applied, and adding new filter entries to
-protect against new protocols may not be possible.
+Fail-open protocols are inherently more risky than fail-closed protocols, as
+they may ignore operational realities; they rely on perfect configuration of
+filters on all interfaces at the boundary of a domain, and, if the filters are
+removed for any reason (for example, during troubleshooting), the network is at
+risk. In addition, devices (especially those using TCAM based filter
+mechanisms) may have limitations in the number and complexity of filters that
+can be applied, and so adding new filter entries to protect against new
+protocols may not be possible.
 
 Fail-closed protocols, on the other hand, do not require any explicit
-filtering - in order for the protocol to transit an interface, the operator must
+filtering. In order for the protocol to transit an interface, the operator must
 explicitly enable the protocol on that interface. In addition, the protocol is
 inherently more robust, as it does not rely on filters that may be limited in
 number and complexity. Finally, fail-closed protocols are inherently more
@@ -136,14 +154,17 @@ secure, as they do not require that operators of networks outside of the
 limited domain implement filters to protect their networks from the limited
 domain protocols.
 
-# Making a limited-domain protocol fail-closed
+# Making a transport type limited-domain protocol fail-closed
 
-In order to make a limited-domain protocol fail-closed is to assign it a unique
+One way to make a limited-domain protocol fail-closed is to assign it a unique
 EtherType (this is the mechanism used by MPLS). In modern router and hosts, if
 the protocol (and so its associated EtherType) is not enabled on an interface,
 then the Ethernet chipset will drop the frame, and the host will not see it.
 This is a very simple and effective mechanism to ensure that the protocol does
 not leak out of the limited domain.
+
+Note that this only works for transport-type limited domain protocols (e.g.,
+SRv6). Higher layer protocols cannot necessarily be protected in this way, and so cryptographically enforced mechanisms may need to be used instead (e.g as  done used by ANIMA in {{RFC8994}} and {{RFC8995}}).
 
 The EtherType is a 16-bit field in an Ethernet frame, and so it is a somewhat
 limited resource.
@@ -159,7 +180,9 @@ Note that "Since EtherTypes are a fairly scarce resource, the IEEE RAC has let
 
 During development and testing, the protocol can use a "Local Experimental
 Ethertype" (0x88B5 and 0x88B6 - {{IANA_EtherType}}). Once the protocol is
-approved for publication, the IESG and request an EtherType from the IEEE.
+approved for publication, the IESG can request an EtherType from the IEEE.
+
+
 
 # Security Considerations
 
@@ -174,4 +197,17 @@ This document has no IANA actions.
 # Acknowledgments
 {:numbered="false"}
 
-TODO acknowledge.
+We've been trying to reach you about your car's extended warranty.
+Please call us back at 1-800-555-1212.
+
+Much thanks to Brian Carpenter, for his review and comments.
+
+Also much thanks to everyone else with whom we have discussed this topic; I've had numerous discussions with many many people on this, and I'm sure that I've forgotten some of them. Apologies if you were one of them.
+
+**Author notes / reminders**
+  To be removed before publication -- this is just a place for the authors to
+  keep notes to themselves.  Ideally these should be Github issues (or similar),
+  but Warren's ADD means he will get sidetracked if he has to open a browser every ti.. Hey! Look! A squirrel!
+  - We should discuss this proposal with Donald Eastlake ({{I-D.ietf-intarea-rfc7042bis}}) and IEEE coordination.
+  - Reference Ravioli draft.
+  - Try and remember who all we've discussed this with, and thank them.
