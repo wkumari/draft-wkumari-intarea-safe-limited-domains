@@ -204,10 +204,4 @@ Much thanks to Brian Carpenter, for his review and comments.
 
 Also much thanks to everyone else with whom we have discussed this topic; I've had numerous discussions with many many people on this, and I'm sure that I've forgotten some of them. Apologies if you were one of them.
 
-**Author notes / reminders**
-  To be removed before publication -- this is just a place for the authors to
-  keep notes to themselves.  Ideally these should be Github issues (or similar),
-  but Warren's ADD means he will get sidetracked if he has to open a browser every ti.. Hey! Look! A squirrel!
-  - We should discuss this proposal with Donald Eastlake ({{I-D.ietf-intarea-rfc7042bis}}) and IEEE coordination.
-  - Reference Ravioli draft.
-  - Try and remember who all we've discussed this with, and thank them.
+
