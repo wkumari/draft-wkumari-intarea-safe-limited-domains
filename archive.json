@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-01-18T00:15:05.516160+00:00",
+  "timestamp": "2024-01-21T00:16:27.004895+00:00",
   "repo": "wkumari/draft-wkumari-intarea-safe-limited-domains",
   "labels": [
     {
@@ -49,6 +49,23 @@
       "color": "ffffff"
     }
   ],
-  "issues": [],
+  "issues": [
+    {
+      "number": 1,
+      "id": "I_kwDOLB9RhM58qyZK",
+      "title": "Discuss with Donald Eastlake and IEEE Co-ordination.",
+      "url": "https://github.com/wkumari/draft-wkumari-intarea-safe-limited-domains/issues/1",
+      "state": "OPEN",
+      "author": "wkumari",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "# Author notes / reminders:\r\n  - We should discuss this proposal with Donald Eastlake ({{I-D.ietf-intarea-rfc7042bis}}) and IEEE coordination.\r\n  - Reference Ravioli draft.\r\n  - Try and remember who all we've discussed this with, and thank them.\r\n\r\n",
+      "createdAt": "2024-01-19T22:53:34Z",
+      "updatedAt": "2024-01-19T22:53:34Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
   "pulls": []
 }
