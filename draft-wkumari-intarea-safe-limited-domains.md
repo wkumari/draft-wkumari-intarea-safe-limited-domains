@@ -43,12 +43,13 @@ informative:
   RFC8995:
   RFC8754:
   RFC3031:
+  RFC9378:
   I-D.ietf-intarea-rfc7042bis:
   IESG_EtherType:
     title: IESG Statement on EtherTypes
     author:
     - org:
-    date: false
+    date: 2023-05-01
     seriesinfo:
       Web: <https://www.ietf.org/about/groups/iesg/statements/ethertypes>
 
@@ -63,18 +64,15 @@ informative:
 --- abstract
 
 There is a trend towards documents describing protocols that are only intended
-to be used within "limited domains". Unfortunately, these drafts often do not
-clearly define how the boundary of the limited domain is established and
+to be used within "limited domains". These documents often do not
+clearly define how the boundary of the limited domain is implemented and
 enforced, or require that operators of these limited domains //perfectly//
-implement filters to protect the rest of the Internet from these protocols.
-
-In addition, these protocols sometimes require that networks that are outside
-of (and unaffiliated with) the limited domain explicitly implement filters in
-order to protect their networks if these protocols leak outside of the limited
-domain.
+implement filters to protect the rest of the global Internet from these protocols
+and vice-versa.
 
 This document discusses the concepts of "fail-open" versus "fail-closed"
-protocols and limited domains, and provides a mechanism for designing limited
+protocols and limited domains, and specifies a layer-2 mechanism that 
+can be used for designing limited
 domain protocols that are safer to deploy.
 
 --- middle
@@ -84,12 +82,12 @@ domain protocols that are safer to deploy.
 {{RFC8799}} discusses the concept of "limited domains", provides examples of
 limited domains, as well as Examples of Limited Domain Solutions, including
 Service Function Chaining (SFC), Segment Routing, "Creative uses of IPv6
-features" (including Extension headers, e.g., for segment routing {{RFC8754}})
+features" (including Extension headers, e.g., for in situ 
+Operations, Administration, and maintenance {{RFC9378}}).
 
 In order to provide context, this document will quote extensively from
-{{RFC8799}}, but it is expected (well, hoped!) that the reader will actually
-read {{RFC8799}} in its entirety. It's relatively short, and it is a very good
-read!
+{{RFC8799}}, but it is assumed that the reader will actually
+read {{RFC8799}} in its entirety.
 
 {{RFC8799}} Section 3, notes:
 
@@ -122,11 +120,14 @@ network operator to take active steps to protect the boundary ("fail-open").
 # Fail-open versus Fail-closed
 
 Protocols can be broadly classified as either "fail-open" or "fail-closed".
-Fail-closed protocols are those that require explicit configuration to enable
-them to transit an interface. A classic example of a fail-closed protocol is
+Fail-closed protocols are those that require explicit interface 
+or device-wide configuration to enable
+them to be accepted or processed when received on an interface. 
+A classic example of a fail-closed protocol is
 MPLS ({{RFC3031}}): In order to allow MPLS to transit an interface, the
-operator must enable the MPLS protocol on that interface. This helps ensure
-that MPLS traffic does not leak out of the network, while also ensuring that
+operator must enable the MPLS protocol on that interface and on the
+device itself. This ensures
+that MPLS traffic 
 outside MPLS traffic does not leak in.
 
 Fail-open protocols are those that require explicit configuration in order
