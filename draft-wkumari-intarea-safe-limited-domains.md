@@ -158,17 +158,18 @@ do not require that operators of networks outside of the
 limited domain implement filters to protect their networks from the limited
 domain traffic.
 
-# Making a transport type limited-domain protocol fail-closed
+# Making a layer-3 type limited-domain protocol fail-closed
 
 One way to make a limited-domain protocol fail-closed is to assign it a unique
 EtherType (this is the mechanism used by MPLS). In modern router and hosts, if
 the protocol (and so its associated EtherType) is not enabled on an interface,
-then the Ethernet chipset will drop the frame, and the host will not see it.
+then the Ethernet chipset will ignore the frame, and the node OS will not process it.
 This is a very simple and effective mechanism to ensure that the protocol does
 not leak out of the limited domain.
 
-Note that this only works for transport-type limited domain protocols (e.g.,
-SRv6). Higher layer protocols cannot necessarily be protected in this way, and so cryptographically enforced mechanisms may need to be used instead (e.g as  done used by ANIMA in {{RFC8994}} and {{RFC8995}}).
+Note that this only works for transport-type limited domain protocols (i.e.,
+protocols running at the layer 3). 
+Higher layer protocols cannot necessarily be protected in this way, and so cryptographically enforced mechanisms may need to be used instead (e.g as  done used by ANIMA in {{RFC8994}} and {{RFC8995}}).
 
 The EtherType is a 16-bit field in an Ethernet frame, and so it is a somewhat
 limited resource.
@@ -183,10 +184,11 @@ Note that "Since EtherTypes are a fairly scarce resource, the IEEE RAC has let
    {{IESG_EtherType}})
 
 During development and testing, the protocol can use a "Local Experimental
-Ethertype" (0x88B5 and 0x88B6 - {{IANA_EtherType}}). Once the protocol is
+Ethertype" (0x88b5 and 0x88b6 - {{IANA_EtherType}}). Once the protocol is
 approved for publication, the IESG can request an EtherType from the IEEE.
 
-
+For discussion: or simply defining one single EtherType for this testing?
+I.e., IPv4 and IPv6 can be identified by their first 4 bits.
 
 # Security Considerations
 
@@ -201,11 +203,6 @@ This document has no IANA actions.
 # Acknowledgments
 {:numbered="false"}
 
-We've been trying to reach you about your car's extended warranty.
-Please call us back at 1-800-555-1212.
-
 Much thanks to Brian Carpenter, for his review and comments.
 
 Also much thanks to everyone else with whom we have discussed this topic; I've had numerous discussions with many many people on this, and I'm sure that I've forgotten some of them. Apologies if you were one of them.
-
-
