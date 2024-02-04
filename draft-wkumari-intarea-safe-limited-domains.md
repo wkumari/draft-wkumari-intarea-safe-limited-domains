@@ -71,7 +71,7 @@ implement filters to protect the rest of the global Internet from these protocol
 and vice-versa.
 
 This document discusses the concepts of "fail-open" versus "fail-closed"
-protocols and limited domains, and specifies a layer-2 mechanism that 
+protocols and limited domains, and specifies a layer-2 mechanism that
 can be used for designing limited
 domain protocols that are safer to deploy.
 
@@ -82,7 +82,7 @@ domain protocols that are safer to deploy.
 {{RFC8799}} discusses the concept of "limited domains", provides examples of
 limited domains, as well as Examples of Limited Domain Solutions, including
 Service Function Chaining (SFC), Segment Routing, "Creative uses of IPv6
-features" (including Extension headers, e.g., for in situ 
+features" (including Extension headers, e.g., for in situ
 Operations, Administration, and maintenance {{RFC9378}}).
 
 In order to provide context, this document will quote extensively from
@@ -120,14 +120,14 @@ network operator to take active steps to protect the boundary ("fail-open").
 # Fail-open versus Fail-closed
 
 Protocols can be broadly classified as either "fail-open" or "fail-closed".
-Fail-closed protocols are those that require explicit interface 
+Fail-closed protocols are those that require explicit interface
 or device-wide configuration to enable
-them to be accepted or processed when received on an interface. 
+them to be accepted or processed when received on an interface.
 A classic example of a fail-closed protocol is
 MPLS ({{RFC3031}}): In order to allow MPLS to transit an interface, the
 operator must enable the MPLS protocol on that interface and on the
 device itself. This ensures
-that 
+that
 outside MPLS traffic does not leak in.
 
 Fail-open protocols are those that require explicit configuration in order
@@ -141,10 +141,10 @@ Fail-open protocols are inherently more risky than fail-closed protocols, as
 they rely on perfect configuration of
 filters on all interfaces at the boundary of a domain, and, if the filters are
 removed for any reason (for example, during troubleshooting), there
-is a risk of inbound or oubound leaks. 
-In addition, some devices or interfaces may have limitations in the size 
+is a risk of inbound or oubound leaks.
+In addition, some devices or interfaces may have limitations in the size
 and complexity of filters that
-can be applied, and so adding new filter entries to limit leaks of a 
+can be applied, and so adding new filter entries to limit leaks of a
 new protocol may not be possible.
 
 Fail-closed protocols, on the other hand, do not require any explicit
@@ -153,7 +153,7 @@ when received on an interface, the operator must
 explicitly enable the protocol on that interface and on the device itself.
 In addition, there is less risk of operational mistakes,
 as it does not rely on filters that may be limited in
-number and complexity. Finally, fail-closed protocols 
+number and complexity. Finally, fail-closed protocols
 do not require that operators of networks outside of the
 limited domain implement filters to protect their networks from the limited
 domain traffic.
@@ -168,7 +168,7 @@ This is a very simple and effective mechanism to ensure that the protocol does
 not leak out of the limited domain.
 
 Note that this only works for transport-type limited domain protocols (i.e.,
-protocols running at the layer 3). 
+protocols running at the layer 3).
 Higher layer protocols cannot necessarily be protected in this way, and so cryptographically enforced mechanisms may need to be used instead (e.g as  done used by ANIMA in {{RFC8994}} and {{RFC8995}}).
 
 The EtherType is a 16-bit field in an Ethernet frame, and so it is a somewhat
