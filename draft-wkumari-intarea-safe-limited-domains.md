@@ -127,7 +127,7 @@ A classic example of a fail-closed protocol is
 MPLS ({{RFC3031}}): In order to allow MPLS to transit an interface, the
 operator must enable the MPLS protocol on that interface and on the
 device itself. This ensures
-that MPLS traffic 
+that 
 outside MPLS traffic does not leak in.
 
 Fail-open protocols are those that require explicit configuration in order
@@ -138,22 +138,25 @@ explicitly filter this traffic, and, in order to ensure that SRv6 traffic does
 not leak in, the operator must explicitly filter SRv6 traffic.
 
 Fail-open protocols are inherently more risky than fail-closed protocols, as
-they may ignore operational realities; they rely on perfect configuration of
+they rely on perfect configuration of
 filters on all interfaces at the boundary of a domain, and, if the filters are
-removed for any reason (for example, during troubleshooting), the network is at
-risk. In addition, devices (especially those using TCAM based filter
-mechanisms) may have limitations in the number and complexity of filters that
-can be applied, and so adding new filter entries to protect against new
-protocols may not be possible.
+removed for any reason (for example, during troubleshooting), there
+is a risk of inbound or oubound leaks. 
+In addition, some devices or interfaces may have limitations in the size 
+and complexity of filters that
+can be applied, and so adding new filter entries to limit leaks of a 
+new protocol may not be possible.
 
 Fail-closed protocols, on the other hand, do not require any explicit
-filtering. In order for the protocol to transit an interface, the operator must
-explicitly enable the protocol on that interface. In addition, the protocol is
-inherently more robust, as it does not rely on filters that may be limited in
-number and complexity. Finally, fail-closed protocols are inherently more
-secure, as they do not require that operators of networks outside of the
+filtering. In order for the protocol to be accepted and processed
+when received on an interface, the operator must
+explicitly enable the protocol on that interface and on the device itself.
+In addition, there is less risk of operational mistakes,
+as it does not rely on filters that may be limited in
+number and complexity. Finally, fail-closed protocols 
+do not require that operators of networks outside of the
 limited domain implement filters to protect their networks from the limited
-domain protocols.
+domain traffic.
 
 # Making a transport type limited-domain protocol fail-closed
 
