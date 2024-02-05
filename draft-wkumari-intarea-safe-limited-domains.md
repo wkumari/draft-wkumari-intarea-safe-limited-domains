@@ -43,12 +43,13 @@ informative:
   RFC8995:
   RFC8754:
   RFC3031:
+  RFC9378:
   I-D.ietf-intarea-rfc7042bis:
   IESG_EtherType:
     title: IESG Statement on EtherTypes
     author:
     - org:
-    date: false
+    date: 2023-05-01
     seriesinfo:
       Web: <https://www.ietf.org/about/groups/iesg/statements/ethertypes>
 
@@ -63,18 +64,15 @@ informative:
 --- abstract
 
 There is a trend towards documents describing protocols that are only intended
-to be used within "limited domains". Unfortunately, these drafts often do not
-clearly define how the boundary of the limited domain is established and
+to be used within "limited domains". These documents often do not
+clearly define how the boundary of the limited domain is implemented and
 enforced, or require that operators of these limited domains //perfectly//
-implement filters to protect the rest of the Internet from these protocols.
-
-In addition, these protocols sometimes require that networks that are outside
-of (and unaffiliated with) the limited domain explicitly implement filters in
-order to protect their networks if these protocols leak outside of the limited
-domain.
+implement filters to protect the rest of the global Internet from these protocols
+and vice-versa.
 
 This document discusses the concepts of "fail-open" versus "fail-closed"
-protocols and limited domains, and provides a mechanism for designing limited
+protocols and limited domains, and specifies a layer-2 mechanism that
+can be used for designing limited
 domain protocols that are safer to deploy.
 
 --- middle
@@ -84,12 +82,12 @@ domain protocols that are safer to deploy.
 {{RFC8799}} discusses the concept of "limited domains", provides examples of
 limited domains, as well as Examples of Limited Domain Solutions, including
 Service Function Chaining (SFC), Segment Routing, "Creative uses of IPv6
-features" (including Extension headers, e.g., for segment routing {{RFC8754}})
+features" (including Extension headers, e.g., for in situ
+Operations, Administration, and maintenance {{RFC9378}}).
 
 In order to provide context, this document will quote extensively from
-{{RFC8799}}, but it is expected (well, hoped!) that the reader will actually
-read {{RFC8799}} in its entirety. It's relatively short, and it is a very good
-read!
+{{RFC8799}}, but it is assumed that the reader will actually
+read {{RFC8799}} in its entirety.
 
 {{RFC8799}} Section 3, notes:
 
@@ -122,11 +120,14 @@ network operator to take active steps to protect the boundary ("fail-open").
 # Fail-open versus Fail-closed
 
 Protocols can be broadly classified as either "fail-open" or "fail-closed".
-Fail-closed protocols are those that require explicit configuration to enable
-them to transit an interface. A classic example of a fail-closed protocol is
+Fail-closed protocols are those that require explicit interface
+or device-wide configuration to enable
+them to be accepted or processed when received on an interface.
+A classic example of a fail-closed protocol is
 MPLS ({{RFC3031}}): In order to allow MPLS to transit an interface, the
-operator must enable the MPLS protocol on that interface. This helps ensure
-that MPLS traffic does not leak out of the network, while also ensuring that
+operator must enable the MPLS protocol on that interface and on the
+device itself. This ensures
+that
 outside MPLS traffic does not leak in.
 
 Fail-open protocols are those that require explicit configuration in order
@@ -137,34 +138,38 @@ explicitly filter this traffic, and, in order to ensure that SRv6 traffic does
 not leak in, the operator must explicitly filter SRv6 traffic.
 
 Fail-open protocols are inherently more risky than fail-closed protocols, as
-they may ignore operational realities; they rely on perfect configuration of
+they rely on perfect configuration of
 filters on all interfaces at the boundary of a domain, and, if the filters are
-removed for any reason (for example, during troubleshooting), the network is at
-risk. In addition, devices (especially those using TCAM based filter
-mechanisms) may have limitations in the number and complexity of filters that
-can be applied, and so adding new filter entries to protect against new
-protocols may not be possible.
+removed for any reason (for example, during troubleshooting), there
+is a risk of inbound or oubound leaks.
+In addition, some devices or interfaces may have limitations in the size
+and complexity of filters that
+can be applied, and so adding new filter entries to limit leaks of a
+new protocol may not be possible.
 
 Fail-closed protocols, on the other hand, do not require any explicit
-filtering. In order for the protocol to transit an interface, the operator must
-explicitly enable the protocol on that interface. In addition, the protocol is
-inherently more robust, as it does not rely on filters that may be limited in
-number and complexity. Finally, fail-closed protocols are inherently more
-secure, as they do not require that operators of networks outside of the
+filtering. In order for the protocol to be accepted and processed
+when received on an interface, the operator must
+explicitly enable the protocol on that interface and on the device itself.
+In addition, there is less risk of operational mistakes,
+as it does not rely on filters that may be limited in
+number and complexity. Finally, fail-closed protocols
+do not require that operators of networks outside of the
 limited domain implement filters to protect their networks from the limited
-domain protocols.
+domain traffic.
 
-# Making a transport type limited-domain protocol fail-closed
+# Making a layer-3 type limited-domain protocol fail-closed
 
 One way to make a limited-domain protocol fail-closed is to assign it a unique
 EtherType (this is the mechanism used by MPLS). In modern router and hosts, if
 the protocol (and so its associated EtherType) is not enabled on an interface,
-then the Ethernet chipset will drop the frame, and the host will not see it.
+then the Ethernet chipset will ignore the frame, and the node OS will not process it.
 This is a very simple and effective mechanism to ensure that the protocol does
 not leak out of the limited domain.
 
-Note that this only works for transport-type limited domain protocols (e.g.,
-SRv6). Higher layer protocols cannot necessarily be protected in this way, and so cryptographically enforced mechanisms may need to be used instead (e.g as  done used by ANIMA in {{RFC8994}} and {{RFC8995}}).
+Note that this only works for transport-type limited domain protocols (i.e.,
+protocols running at the layer 3).
+Higher layer protocols cannot necessarily be protected in this way, and so cryptographically enforced mechanisms may need to be used instead (e.g as  done used by ANIMA in {{RFC8994}} and {{RFC8995}}).
 
 The EtherType is a 16-bit field in an Ethernet frame, and so it is a somewhat
 limited resource.
@@ -179,10 +184,11 @@ Note that "Since EtherTypes are a fairly scarce resource, the IEEE RAC has let
    {{IESG_EtherType}})
 
 During development and testing, the protocol can use a "Local Experimental
-Ethertype" (0x88B5 and 0x88B6 - {{IANA_EtherType}}). Once the protocol is
+Ethertype" (0x88b5 and 0x88b6 - {{IANA_EtherType}}). Once the protocol is
 approved for publication, the IESG can request an EtherType from the IEEE.
 
-
+For discussion: or simply defining one single EtherType for this testing?
+I.e., IPv4 and IPv6 can be identified by their first 4 bits.
 
 # Security Considerations
 
@@ -197,11 +203,6 @@ This document has no IANA actions.
 # Acknowledgments
 {:numbered="false"}
 
-We've been trying to reach you about your car's extended warranty.
-Please call us back at 1-800-555-1212.
-
 Much thanks to Brian Carpenter, for his review and comments.
 
 Also much thanks to everyone else with whom we have discussed this topic; I've had numerous discussions with many many people on this, and I'm sure that I've forgotten some of them. Apologies if you were one of them.
-
-
