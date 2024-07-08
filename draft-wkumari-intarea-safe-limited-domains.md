@@ -44,6 +44,7 @@ informative:
   RFC8754:
   RFC3031:
   RFC9378:
+  RFC9542:
   I-D.ietf-intarea-rfc7042bis:
   IESG_EtherType:
     title: IESG Statement on EtherTypes
@@ -163,13 +164,15 @@ domain traffic.
 One way to make a limited-domain protocol fail-closed is to assign it a unique
 EtherType (this is the mechanism used by MPLS). In modern router and hosts, if
 the protocol (and so its associated EtherType) is not enabled on an interface,
-then the Ethernet chipset will ignore the frame, and the node OS will not process it.
-This is a very simple and effective mechanism to ensure that the protocol does
-not leak out of the limited domain.
+then the Ethernet chipset will ignore the frame, and the node OS will not
+process it. This is a very simple and effective mechanism to ensure that the
+protocol does not leak out of the limited domain if and when an operator makes
+a mistake in configuring filters.
 
 Note that this only works for transport-type limited domain protocols (i.e.,
-protocols running at the layer 3).
-Higher layer protocols cannot necessarily be protected in this way, and so cryptographically enforced mechanisms may need to be used instead (e.g as  done used by ANIMA in {{RFC8994}} and {{RFC8995}}).
+protocols running at layer 3). Higher layer protocols cannot necessarily be
+protected in this way, and so cryptographically enforced mechanisms may need to
+be used instead (e.g as  done used by ANIMA in {{RFC8994}} and {{RFC8995}}).
 
 The EtherType is a 16-bit field in an Ethernet frame, and so it is a somewhat
 limited resource.
@@ -190,6 +193,29 @@ approved for publication, the IESG can request an EtherType from the IEEE.
 For discussion: or simply defining one single EtherType for this testing?
 I.e., IPv4 and IPv6 can be identified by their first 4 bits.
 
+[ Editor note: EtherTypes are a scarce resource, and so we need to be
+careful about how we use them. It is likely that there will only
+be a very limited (sorry!) number of protocols that need to be protected in
+this way (on the order of 3 or 4).
+
+However, it is worth considering if there are other ways to achieve the same
+goal. An option would be to set aside a single EtherType, and then have a
+registry of "limited sub-EtherTypes" that are assigned by IANA. This would
+allow us to protect a large number of protocols, while only using a single
+EtherType, but would require something that looks more like a new L2 header. ]
+
+
+Another option to make a limited-domain protocol fail-closed is to use an
+identifier under the IANA OUI (00-00-5E) as explained in {{RFC9542}}.
+
+[Editor note: This is a good idea, but it is not clear if it is practical. This
+above would need a bunch more text / discussion. It ends up being a bit like
+the "limited sub-EtherTypes" idea above, but with the additional complexity of
+not having the MAC address be the "normal" MAC address of the device that you
+are sending the traffic to. This will require more discussion with the WG, and
+the IEEE liaisons. ]
+
+
 # Security Considerations
 
 TODO Security
@@ -205,4 +231,14 @@ This document has no IANA actions.
 
 Much thanks to Brian Carpenter, for his review and comments.
 
-Also much thanks to everyone else with whom we have discussed this topic; I've had numerous discussions with many many people on this, and I'm sure that I've forgotten some of them. Apologies if you were one of them.
+Also much thanks to Deborah Brungard, for her review and comments.
+
+Also much thanks to everyone else with whom we have discussed this topic; I've
+had numerous discussions with many many people on this, and I'm sure that I've
+forgotten some of them. Apologies if you were one of them.
+
+# Changelog
+{:numbered="false"}
+* 00-01:
+  * Deborah pointed out that "this only works for transport-type limited domain
+    protocols (e.g., SRv6)" could be read as SRv6 fails-closed.
