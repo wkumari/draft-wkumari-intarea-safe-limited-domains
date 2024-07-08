@@ -5,11 +5,11 @@
 Internet Area Working Group                                    W. Kumari
 Internet-Draft                                               Google, LLC
 Intended status: Standards Track                               A. Alston
-Expires: 8 August 2024                   Liquid Intelligent Technologies
+Expires: 9 January 2025                  Liquid Intelligent Technologies
                                                                É. Vyncke
                                                              S. Krishnan
                                                                    Cisco
-                                                         5 February 2024
+                                                             8 July 2024
 
 
                         Safe(r) Limited Domains
@@ -56,7 +56,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 August 2024.
+   This Internet-Draft will expire on 9 January 2025.
 
 Copyright Notice
 
@@ -84,6 +84,7 @@ Table of Contents
      7.1.  Normative References
      7.2.  Informative References
    Acknowledgments
+   Changelog
    Authors' Addresses
 
 1.  Introduction
@@ -180,11 +181,12 @@ Table of Contents
    is not enabled on an interface, then the Ethernet chipset will ignore
    the frame, and the node OS will not process it.  This is a very
    simple and effective mechanism to ensure that the protocol does not
-   leak out of the limited domain.
+   leak out of the limited domain if and when an operator makes a
+   mistake in configuring filters.
 
    Note that this only works for transport-type limited domain protocols
-   (i.e., protocols running at the layer 3).  Higher layer protocols
-   cannot necessarily be protected in this way, and so cryptographically
+   (i.e., protocols running at layer 3).  Higher layer protocols cannot
+   necessarily be protected in this way, and so cryptographically
    enforced mechanisms may need to be used instead (e.g as done used by
    ANIMA in [RFC8994] and [RFC8995]).
 
@@ -208,6 +210,30 @@ Table of Contents
    For discussion: or simply defining one single EtherType for this
    testing?  I.e., IPv4 and IPv6 can be identified by their first 4
    bits.
+
+   [ Editor note: EtherTypes are a scarce resource, and so we need to be
+   careful about how we use them.  It is likely that there will only be
+   a very limited (sorry!) number of protocols that need to be protected
+   in this way (on the order of 3 or 4).
+
+   However, it is worth considering if there are other ways to achieve
+   the same goal.  An option would be to set aside a single EtherType,
+   and then have a registry of "limited sub-EtherTypes" that are
+   assigned by IANA.  This would allow us to protect a large number of
+   protocols, while only using a single EtherType, but would require
+   something that looks more like a new L2 header. ]
+
+   Another option to make a limited-domain protocol fail-closed is to
+   use an identifier under the IANA OUI (00-00-5E) as explained in
+   [RFC9542].
+
+   [Editor note: This is a good idea, but it is not clear if it is
+   practical.  This above would need a bunch more text / discussion.  It
+   ends up being a bit like the "limited sub-EtherTypes" idea above, but
+   with the additional complexity of not having the MAC address be the
+   "normal" MAC address of the device that you are sending the traffic
+   to.  This will require more discussion with the WG, and the IEEE
+   liaisons. ]
 
 5.  Security Considerations
 
@@ -280,14 +306,30 @@ Table of Contents
               DOI 10.17487/RFC9378, April 2023,
               <https://www.rfc-editor.org/rfc/rfc9378>.
 
+   [RFC9542]  Eastlake 3rd, D., Abley, J., and Y. Li, "IANA
+              Considerations and IETF Protocol and Documentation Usage
+              for IEEE 802 Parameters", BCP 141, RFC 9542,
+              DOI 10.17487/RFC9542, April 2024,
+              <https://www.rfc-editor.org/rfc/rfc9542>.
+
 Acknowledgments
 
    Much thanks to Brian Carpenter, for his review and comments.
+
+   Also much thanks to Deborah Brungard, for her review and comments.
 
    Also much thanks to everyone else with whom we have discussed this
    topic; I've had numerous discussions with many many people on this,
    and I'm sure that I've forgotten some of them.  Apologies if you were
    one of them.
+
+Changelog
+
+   *  00-01:
+
+      -  Deborah pointed out that "this only works for transport-type
+         limited domain protocols (e.g., SRv6)" could be read as SRv6
+         fails-closed.
 
 Authors' Addresses
 

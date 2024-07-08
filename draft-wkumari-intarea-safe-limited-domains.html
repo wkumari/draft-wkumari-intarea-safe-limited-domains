@@ -21,23 +21,22 @@ protocols and limited domains, and specifies a layer-2 mechanism that
 can be used for designing limited
 domain protocols that are safer to deploy. 
     ' name="description">
-<meta content="xml2rfc 3.19.2" name="generator">
+<meta content="xml2rfc 3.22.0" name="generator">
 <meta content="Internet-Draft" name="keyword">
 <meta content="draft-wkumari-intarea-safe-limited-domains-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.19.2
-    Python 3.11.6
+  xml2rfc 3.22.0
+    Python 3.12.3
     ConfigArgParse 1.7
     google-i18n-address 3.1.0
     intervaltree 3.1.0
-    Jinja2 3.1.2
-    lxml 4.9.3
-    platformdirs 4.2.0
+    Jinja2 3.1.4
+    lxml 4.9.4
+    platformdirs 4.2.2
     pycountry 22.3.5
     PyYAML 6.0.1
-    requests 2.31.0
-    setuptools 68.2.2
-    six 1.16.0
+    requests 2.32.3
+    setuptools 69.5.1
     wcwidth 0.2.13
 -->
 <link href="draft-wkumari-intarea-safe-limited-domains.xml" rel="alternate" type="application/rfc+xml">
@@ -1037,11 +1036,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">safer-limited-domains</td>
-<td class="right">February 2024</td>
+<td class="right">July 2024</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Kumari, et al.</td>
-<td class="center">Expires 8 August 2024</td>
+<td class="center">Expires 9 January 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1054,12 +1053,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-wkumari-intarea-safe-limited-domains-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-02-05" class="published">5 February 2024</time>
+<time datetime="2024-07-08" class="published">8 July 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2024-08-08">8 August 2024</time></dd>
+<dd class="expires"><time datetime="2025-01-09">9 January 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1125,7 +1124,7 @@ domain protocols that are safer to deploy.<a href="#section-abstract-2" class="p
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 8 August 2024.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 9 January 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1187,7 +1186,10 @@ domain protocols that are safer to deploy.<a href="#section-abstract-2" class="p
             <p id="section-toc.1-1.8.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+            <p id="section-toc.1-1.9.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-changelog" class="internal xref">Changelog</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1296,12 +1298,14 @@ domain traffic.<a href="#section-3-4" class="pilcrow">¶</a></p>
 <p id="section-4-1">One way to make a limited-domain protocol fail-closed is to assign it a unique
 EtherType (this is the mechanism used by MPLS). In modern router and hosts, if
 the protocol (and so its associated EtherType) is not enabled on an interface,
-then the Ethernet chipset will ignore the frame, and the node OS will not process it.
-This is a very simple and effective mechanism to ensure that the protocol does
-not leak out of the limited domain.<a href="#section-4-1" class="pilcrow">¶</a></p>
+then the Ethernet chipset will ignore the frame, and the node OS will not
+process it. This is a very simple and effective mechanism to ensure that the
+protocol does not leak out of the limited domain if and when an operator makes
+a mistake in configuring filters.<a href="#section-4-1" class="pilcrow">¶</a></p>
 <p id="section-4-2">Note that this only works for transport-type limited domain protocols (i.e.,
-protocols running at the layer 3).
-Higher layer protocols cannot necessarily be protected in this way, and so cryptographically enforced mechanisms may need to be used instead (e.g as  done used by ANIMA in <span>[<a href="#RFC8994" class="cite xref">RFC8994</a>]</span> and <span>[<a href="#RFC8995" class="cite xref">RFC8995</a>]</span>).<a href="#section-4-2" class="pilcrow">¶</a></p>
+protocols running at layer 3). Higher layer protocols cannot necessarily be
+protected in this way, and so cryptographically enforced mechanisms may need to
+be used instead (e.g as  done used by ANIMA in <span>[<a href="#RFC8994" class="cite xref">RFC8994</a>]</span> and <span>[<a href="#RFC8995" class="cite xref">RFC8995</a>]</span>).<a href="#section-4-2" class="pilcrow">¶</a></p>
 <p id="section-4-3">The EtherType is a 16-bit field in an Ethernet frame, and so it is a somewhat
 limited resource.<a href="#section-4-3" class="pilcrow">¶</a></p>
 <p id="section-4-4">Note that "Since EtherTypes are a fairly scarce resource, the IEEE RAC has let
@@ -1317,6 +1321,23 @@ Ethertype" (0x88b5 and 0x88b6 - <span>[<a href="#IANA_EtherType" class="cite xre
 approved for publication, the IESG can request an EtherType from the IEEE.<a href="#section-4-5" class="pilcrow">¶</a></p>
 <p id="section-4-6">For discussion: or simply defining one single EtherType for this testing?
 I.e., IPv4 and IPv6 can be identified by their first 4 bits.<a href="#section-4-6" class="pilcrow">¶</a></p>
+<p id="section-4-7">[ Editor note: EtherTypes are a scarce resource, and so we need to be
+careful about how we use them. It is likely that there will only
+be a very limited (sorry!) number of protocols that need to be protected in
+this way (on the order of 3 or 4).<a href="#section-4-7" class="pilcrow">¶</a></p>
+<p id="section-4-8">However, it is worth considering if there are other ways to achieve the same
+goal. An option would be to set aside a single EtherType, and then have a
+registry of "limited sub-EtherTypes" that are assigned by IANA. This would
+allow us to protect a large number of protocols, while only using a single
+EtherType, but would require something that looks more like a new L2 header. ]<a href="#section-4-8" class="pilcrow">¶</a></p>
+<p id="section-4-9">Another option to make a limited-domain protocol fail-closed is to use an
+identifier under the IANA OUI (00-00-5E) as explained in <span>[<a href="#RFC9542" class="cite xref">RFC9542</a>]</span>.<a href="#section-4-9" class="pilcrow">¶</a></p>
+<p id="section-4-10">[Editor note: This is a good idea, but it is not clear if it is practical. This
+above would need a bunch more text / discussion. It ends up being a bit like
+the "limited sub-EtherTypes" idea above, but with the additional complexity of
+not having the MAC address be the "normal" MAC address of the device that you
+are sending the traffic to. This will require more discussion with the WG, and
+the IEEE liaisons. ]<a href="#section-4-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-considerations">
@@ -1395,8 +1416,12 @@ I.e., IPv4 and IPv6 can be identified by their first 4 bits.<a href="#section-4-
 <span class="refAuthor">Pritikin, M.</span>, <span class="refAuthor">Richardson, M.</span>, <span class="refAuthor">Eckert, T.</span>, <span class="refAuthor">Behringer, M.</span>, and <span class="refAuthor">K. Watsen</span>, <span class="refTitle">"Bootstrapping Remote Secure Key Infrastructure (BRSKI)"</span>, <span class="seriesInfo">RFC 8995</span>, <span class="seriesInfo">DOI 10.17487/RFC8995</span>, <time datetime="2021-05" class="refDate">May 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8995">https://www.rfc-editor.org/rfc/rfc8995</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC9378">[RFC9378]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Brockners, F., Ed.</span>, <span class="refAuthor">Bhandari, S., Ed.</span>, <span class="refAuthor">Bernier, D.</span>, and <span class="refAuthor">T. Mizrahi, Ed.</span>, <span class="refTitle">"In Situ Operations, Administration, and Maintenance (IOAM) Deployment"</span>, <span class="seriesInfo">RFC 9378</span>, <span class="seriesInfo">DOI 10.17487/RFC9378</span>, <time datetime="2023-04" class="refDate">April 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9378">https://www.rfc-editor.org/rfc/rfc9378</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9542">[RFC9542]</dt>
+      <dd>
+<span class="refAuthor">Eastlake 3rd, D.</span>, <span class="refAuthor">Abley, J.</span>, and <span class="refAuthor">Y. Li</span>, <span class="refTitle">"IANA Considerations and IETF Protocol and Documentation Usage for IEEE 802 Parameters"</span>, <span class="seriesInfo">BCP 141</span>, <span class="seriesInfo">RFC 9542</span>, <span class="seriesInfo">DOI 10.17487/RFC9542</span>, <time datetime="2024-04" class="refDate">April 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9542">https://www.rfc-editor.org/rfc/rfc9542</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
@@ -1408,11 +1433,32 @@ I.e., IPv4 and IPv6 can be identified by their first 4 bits.<a href="#section-4-
 <a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
       </h2>
 <p id="appendix-A-1">Much thanks to Brian Carpenter, for his review and comments.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
-<p id="appendix-A-2">Also much thanks to everyone else with whom we have discussed this topic; I've had numerous discussions with many many people on this, and I'm sure that I've forgotten some of them. Apologies if you were one of them.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
+<p id="appendix-A-2">Also much thanks to Deborah Brungard, for her review and comments.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
+<p id="appendix-A-3">Also much thanks to everyone else with whom we have discussed this topic; I've
+had numerous discussions with many many people on this, and I'm sure that I've
+forgotten some of them. Apologies if you were one of them.<a href="#appendix-A-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="changelog">
+<section id="appendix-B">
+      <h2 id="name-changelog">
+<a href="#name-changelog" class="section-name selfRef">Changelog</a>
+      </h2>
+<ul class="normal">
+<li class="normal" id="appendix-B-1.1">
+          <p id="appendix-B-1.1.1">00-01:<a href="#appendix-B-1.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-B-1.1.2.1">
+              <p id="appendix-B-1.1.2.1.1">Deborah pointed out that "this only works for transport-type limited domain
+protocols (e.g., SRv6)" could be read as SRv6 fails-closed.<a href="#appendix-B-1.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</li>
+      </ul>
 </section>
 </div>
 <div id="authors-addresses">
-<section id="appendix-B">
+<section id="appendix-C">
       <h2 id="name-authors-addresses">
 <a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
       </h2>
