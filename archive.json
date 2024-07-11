@@ -1,0 +1,225 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2024-07-11T00:16:28.080180+00:00",
+  "repo": "wkumari/draft-wkumari-intarea-safe-limited-domains",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [
+    {
+      "number": 1,
+      "id": "I_kwDOLB9RhM58qyZK",
+      "title": "Discuss with Donald Eastlake and IEEE Co-ordination.",
+      "url": "https://github.com/wkumari/draft-wkumari-intarea-safe-limited-domains/issues/1",
+      "state": "OPEN",
+      "author": "wkumari",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "# Author notes / reminders:\r\n  - We should discuss this proposal with Donald Eastlake ({{I-D.ietf-intarea-rfc7042bis}}) and IEEE coordination.\r\n  - Reference Ravioli draft.\r\n  - Try and remember who all we've discussed this with, and thank them.\r\n\r\n",
+      "createdAt": "2024-01-19T22:53:34Z",
+      "updatedAt": "2024-02-04T23:50:58Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "evyncke",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Although nothing urgent yet ;-)",
+          "createdAt": "2024-02-04T14:10:06Z",
+          "updatedAt": "2024-02-04T14:10:06Z"
+        },
+        {
+          "author": "wkumari",
+          "authorAssociation": "OWNER",
+          "body": "I done created the issue, but then didn't you know, update the issue...\r\n\r\nI sent email to Donald on Jen 23rd, and he said he'd have a look. ",
+          "createdAt": "2024-02-04T23:50:57Z",
+          "updatedAt": "2024-02-04T23:50:57Z"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "id": "I_kwDOLB9RhM5-M3SC",
+      "title": "Document title ?",
+      "url": "https://github.com/wkumari/draft-wkumari-intarea-safe-limited-domains/issues/3",
+      "state": "OPEN",
+      "author": "evyncke",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "It is still time to change the I-D title (as well as the file name).\r\n\r\nWhat about \"Layer-2 Isolation for Limited Domains\" ?\r\n\r\nIt is more than bikeshedding, IMHO, it does not pretend to be \"safer\" just \"isolated\"",
+      "createdAt": "2024-02-04T20:58:35Z",
+      "updatedAt": "2024-02-05T19:40:06Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "evyncke",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Could also be \"Layer-2 Fail-Closed via specific EtherType\"",
+          "createdAt": "2024-02-04T20:59:14Z",
+          "updatedAt": "2024-02-04T20:59:14Z"
+        },
+        {
+          "author": "wkumari",
+          "authorAssociation": "OWNER",
+          "body": "Perhaps.\r\n\r\nIt does also discuss / introduce the concept of fail-open vs fail-closed.\r\nHow about \"Fail-Closed Limited Domains\" or \"Making Limited Domains Fail\r\nClosed\"?\r\n\r\n\r\n\r\n\r\nOn Sun, Feb 04, 2024 at 3:59 PM, Eric Vyncke ***@***.***>\r\nwrote:\r\n\r\n> Could also be \"Layer-2 Fail-Closed via specific EtherType\"\r\n>\r\n> \u2014\r\n> Reply to this email directly, view it on GitHub\r\n> <https://github.com/wkumari/draft-wkumari-intarea-safe-limited-domains/issues/3#issuecomment-1925912299>,\r\n> or unsubscribe\r\n> <https://github.com/notifications/unsubscribe-auth/ABDG3XGPCQNX72N3XYJCMDDYR7ZC3AVCNFSM6AAAAABCZELJQKVHI2DSMVQWIX3LMV43OSLTON2WKQ3PNVWWK3TUHMYTSMRVHEYTEMRZHE>\r\n> .\r\n> You are receiving this because you are subscribed to this thread.Message\r\n> ID:\r\n> <wkumari/draft-wkumari-intarea-safe-limited-domains/issues/3/1925912299@\r\n> github.com>\r\n>\r\n",
+          "createdAt": "2024-02-05T19:40:05Z",
+          "updatedAt": "2024-02-05T19:40:05Z"
+        }
+      ]
+    }
+  ],
+  "pulls": [
+    {
+      "number": 2,
+      "id": "PR_kwDOLB9RhM5l8ylS",
+      "title": "\u00c9ric's first take",
+      "url": "https://github.com/wkumari/draft-wkumari-intarea-safe-limited-domains/pull/2",
+      "state": "MERGED",
+      "author": "evyncke",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Hi Warren and others,\r\n\r\nJust did a first pass over Warren's original draft.",
+      "createdAt": "2024-02-04T15:33:00Z",
+      "updatedAt": "2024-02-05T21:12:53Z",
+      "baseRepository": "wkumari/draft-wkumari-intarea-safe-limited-domains",
+      "baseRefName": "main",
+      "baseRefOid": "e93f1ce319cd6bc8ab17e2b5add4c6a8f800a283",
+      "headRepository": "evyncke/draft-wkumari-intarea-safe-limited-domains",
+      "headRefName": "main",
+      "headRefOid": "296607af7c8970711c59098be328776400ab6abb",
+      "closedAt": "2024-02-05T21:12:50Z",
+      "mergedAt": "2024-02-05T21:12:50Z",
+      "mergedBy": "wkumari",
+      "mergeCommit": {
+        "oid": "e9f40f127433cbbf29334ff179cfa3c20bfa513c"
+      },
+      "comments": [
+        {
+          "author": "evyncke",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "@wkumari would love to see your view on the changes, I have done my first pass and nothing else to add.",
+          "createdAt": "2024-02-04T19:49:24Z",
+          "updatedAt": "2024-02-04T19:49:24Z"
+        },
+        {
+          "author": "wkumari",
+          "authorAssociation": "OWNER",
+          "body": "I'm quite bummed by your removal of \"We've been trying to reach you about your car's extended warrantee\", but I understand that you don't live in the USA (and neither will many readers), and so aren't constantly bombarded with this.... so, a very grudging \"Okey\" on that. \r\n\r\nHappy smiles on the rest :-P ",
+          "createdAt": "2024-02-05T21:12:52Z",
+          "updatedAt": "2024-02-05T21:12:52Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 4,
+      "id": "PR_kwDOLB9RhM50u_Qg",
+      "title": "Add OUI suggestion from Donald. Somehow I managed to lose a bunch of \u2026",
+      "url": "https://github.com/wkumari/draft-wkumari-intarea-safe-limited-domains/pull/4",
+      "state": "MERGED",
+      "author": "wkumari",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "\u2026text (I forgot to push, and then reverted...), so apologies if I lost anyones text",
+      "createdAt": "2024-07-08T19:09:21Z",
+      "updatedAt": "2024-07-09T14:33:43Z",
+      "baseRepository": "wkumari/draft-wkumari-intarea-safe-limited-domains",
+      "baseRefName": "main",
+      "baseRefOid": "e9f40f127433cbbf29334ff179cfa3c20bfa513c",
+      "headRepository": "wkumari/draft-wkumari-intarea-safe-limited-domains",
+      "headRefName": "Pre-IETF120",
+      "headRefOid": "6147419dde769989a1cbd0f981d227fd5acdb145",
+      "closedAt": "2024-07-08T21:07:35Z",
+      "mergedAt": "2024-07-08T21:07:35Z",
+      "mergedBy": "wkumari",
+      "mergeCommit": {
+        "oid": "73db2dd8d0b5d15ffe5377ad56701bcfc8ea45b1"
+      },
+      "comments": [
+        {
+          "author": "wkumari",
+          "authorAssociation": "OWNER",
+          "body": "Thank you, Suresh.",
+          "createdAt": "2024-07-08T21:07:57Z",
+          "updatedAt": "2024-07-08T21:07:57Z"
+        },
+        {
+          "author": "evyncke",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I agree: the changes look good to me. I especially like the final open discussion and the change from transport to layer-3 limited domains.",
+          "createdAt": "2024-07-09T09:25:57Z",
+          "updatedAt": "2024-07-09T09:25:57Z"
+        },
+        {
+          "author": "wkumari",
+          "authorAssociation": "OWNER",
+          "body": "On Tue, Jul 09, 2024 at 5:26 AM, Eric Vyncke ***@***.***>\r\nwrote:\r\n\r\n> I agree: the changes look good to me. I especially like the final open\r\n> discussion and the change from transport to layer-3 limited domains.\r\n>\r\n\r\n\r\nAwesome, thanks!\r\n\r\nI submitted a new version last night (just prior to the cut-off)\r\n\r\nW\r\n\r\n\r\n\u2014\r\n> Reply to this email directly, view it on GitHub\r\n> <https://github.com/wkumari/draft-wkumari-intarea-safe-limited-domains/pull/4#issuecomment-2217144717>,\r\n> or unsubscribe\r\n> <https://github.com/notifications/unsubscribe-auth/ABDG3XGJUSFJGIR67B6NGVTZLOUDXAVCNFSM6AAAAABKRNKY4CVHI2DSMVQWIX3LMV43OSLTON2WKQ3PNVWWK3TUHMZDEMJXGE2DINZRG4>\r\n> .\r\n> You are receiving this because you modified the open/close state.Message\r\n> ID: <wkumari/draft-wkumari-intarea-safe-limited-domains/pull/4/c2217144717\r\n> @github.com>\r\n>\r\n",
+          "createdAt": "2024-07-09T14:33:41Z",
+          "updatedAt": "2024-07-09T14:33:41Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOLB9RhM6BAVov",
+          "commit": {
+            "abbreviatedOid": "6147419"
+          },
+          "author": "sureshkrishnan",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "Looks good to me.",
+          "createdAt": "2024-07-08T20:31:03Z",
+          "updatedAt": "2024-07-08T20:31:03Z",
+          "comments": []
+        }
+      ]
+    }
+  ]
+}
