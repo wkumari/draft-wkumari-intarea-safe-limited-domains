@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-07-09T00:15:35.830805+00:00",
+  "timestamp": "2024-07-11T00:16:28.080180+00:00",
   "repo": "wkumari/draft-wkumari-intarea-safe-limited-domains",
   "labels": [
     {
@@ -169,7 +169,7 @@
       "labels": [],
       "body": "\u2026text (I forgot to push, and then reverted...), so apologies if I lost anyones text",
       "createdAt": "2024-07-08T19:09:21Z",
-      "updatedAt": "2024-07-08T21:07:58Z",
+      "updatedAt": "2024-07-09T14:33:43Z",
       "baseRepository": "wkumari/draft-wkumari-intarea-safe-limited-domains",
       "baseRefName": "main",
       "baseRefOid": "e9f40f127433cbbf29334ff179cfa3c20bfa513c",
@@ -189,6 +189,20 @@
           "body": "Thank you, Suresh.",
           "createdAt": "2024-07-08T21:07:57Z",
           "updatedAt": "2024-07-08T21:07:57Z"
+        },
+        {
+          "author": "evyncke",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I agree: the changes look good to me. I especially like the final open discussion and the change from transport to layer-3 limited domains.",
+          "createdAt": "2024-07-09T09:25:57Z",
+          "updatedAt": "2024-07-09T09:25:57Z"
+        },
+        {
+          "author": "wkumari",
+          "authorAssociation": "OWNER",
+          "body": "On Tue, Jul 09, 2024 at 5:26 AM, Eric Vyncke ***@***.***>\r\nwrote:\r\n\r\n> I agree: the changes look good to me. I especially like the final open\r\n> discussion and the change from transport to layer-3 limited domains.\r\n>\r\n\r\n\r\nAwesome, thanks!\r\n\r\nI submitted a new version last night (just prior to the cut-off)\r\n\r\nW\r\n\r\n\r\n\u2014\r\n> Reply to this email directly, view it on GitHub\r\n> <https://github.com/wkumari/draft-wkumari-intarea-safe-limited-domains/pull/4#issuecomment-2217144717>,\r\n> or unsubscribe\r\n> <https://github.com/notifications/unsubscribe-auth/ABDG3XGJUSFJGIR67B6NGVTZLOUDXAVCNFSM6AAAAABKRNKY4CVHI2DSMVQWIX3LMV43OSLTON2WKQ3PNVWWK3TUHMZDEMJXGE2DINZRG4>\r\n> .\r\n> You are receiving this because you modified the open/close state.Message\r\n> ID: <wkumari/draft-wkumari-intarea-safe-limited-domains/pull/4/c2217144717\r\n> @github.com>\r\n>\r\n",
+          "createdAt": "2024-07-09T14:33:41Z",
+          "updatedAt": "2024-07-09T14:33:41Z"
         }
       ],
       "reviews": [
