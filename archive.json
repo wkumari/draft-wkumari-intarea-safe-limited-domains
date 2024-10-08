@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-06T00:19:54.693234+00:00",
+  "timestamp": "2024-10-08T00:17:53.747261+00:00",
   "repo": "wkumari/draft-wkumari-intarea-safe-limited-domains",
   "labels": [
     {
@@ -67,7 +67,7 @@
       "comments": [
         {
           "author": "evyncke",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "body": "Although nothing urgent yet ;-)",
           "createdAt": "2024-02-04T14:10:06Z",
           "updatedAt": "2024-02-04T14:10:06Z"
@@ -88,7 +88,7 @@
       "url": "https://github.com/wkumari/draft-wkumari-intarea-safe-limited-domains/issues/3",
       "state": "OPEN",
       "author": "evyncke",
-      "authorAssociation": "CONTRIBUTOR",
+      "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "It is still time to change the I-D title (as well as the file name).\r\n\r\nWhat about \"Layer-2 Isolation for Limited Domains\" ?\r\n\r\nIt is more than bikeshedding, IMHO, it does not pretend to be \"safer\" just \"isolated\"",
@@ -98,7 +98,7 @@
       "comments": [
         {
           "author": "evyncke",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "body": "Could also be \"Layer-2 Fail-Closed via specific EtherType\"",
           "createdAt": "2024-02-04T20:59:14Z",
           "updatedAt": "2024-02-04T20:59:14Z"
@@ -121,7 +121,7 @@
       "url": "https://github.com/wkumari/draft-wkumari-intarea-safe-limited-domains/pull/2",
       "state": "MERGED",
       "author": "evyncke",
-      "authorAssociation": "CONTRIBUTOR",
+      "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Hi Warren and others,\r\n\r\nJust did a first pass over Warren's original draft.",
@@ -142,7 +142,7 @@
       "comments": [
         {
           "author": "evyncke",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "body": "@wkumari would love to see your view on the changes, I have done my first pass and nothing else to add.",
           "createdAt": "2024-02-04T19:49:24Z",
           "updatedAt": "2024-02-04T19:49:24Z"
@@ -192,7 +192,7 @@
         },
         {
           "author": "evyncke",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "body": "I agree: the changes look good to me. I especially like the final open discussion and the change from transport to layer-3 limited domains.",
           "createdAt": "2024-07-09T09:25:57Z",
           "updatedAt": "2024-07-09T09:25:57Z"
