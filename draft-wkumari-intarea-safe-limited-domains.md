@@ -267,13 +267,14 @@ IANA OUI.
 
 # Security Considerations
 
-Protocols are designated as "limited domain" because something unexpected might happen if
-they leak outside of a domain with unified management. For example, VLAN or VPN
-or overlay identifiers may be misinterpreted resulting in the delivery of data
-to or the acceptance of data from unauthorized network nodes violating intended
-security constraints. The use of a layer-2 protocol identifier to provide a
-"fail closed" barrier at the domain border can significantly improve security
-by eliminating the opportunity for such misinterpretation.
+Protocols are designated as "limited domain" because something unexpected might
+happen if they leak outside of a domain with unified management. For example,
+VLAN or VPN or overlay identifiers may be misinterpreted resulting in the
+delivery of data to or the acceptance of data from unauthorized network nodes
+violating intended security constraints. The use of a layer-2 protocol
+identifier to provide a "fail closed" barrier at the domain border can
+significantly improve security by eliminating the opportunity for such
+misinterpretation.
 
 # IANA Considerations
 
