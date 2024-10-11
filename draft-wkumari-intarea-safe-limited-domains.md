@@ -267,7 +267,7 @@ IANA OUI.
 
 # Security Considerations
 
-Protocols are designated as "limited domain" because something bad happens if
+Protocols are designated as "limited domain" because something unexpected might happen if
 they leak outside of a domain with unified management. For example, VLAN or VPN
 or overlay identifiers may be misinterpreted resulting in the delivery of data
 to or the acceptance of data from unauthorized network nodes violating intended
