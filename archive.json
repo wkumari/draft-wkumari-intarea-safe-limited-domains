@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-10-10T00:17:53.102444+00:00",
+  "timestamp": "2024-10-13T00:19:43.771444+00:00",
   "repo": "wkumari/draft-wkumari-intarea-safe-limited-domains",
   "labels": [
     {
@@ -212,7 +212,7 @@
             "abbreviatedOid": "6147419"
           },
           "author": "sureshkrishnan",
-          "authorAssociation": "NONE",
+          "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "Looks good to me.",
           "createdAt": "2024-07-08T20:31:03Z",
@@ -226,7 +226,7 @@
       "id": "PR_kwDOLB9RhM59tjE6",
       "title": "Incorporate Donalds changes",
       "url": "https://github.com/wkumari/draft-wkumari-intarea-safe-limited-domains/pull/5",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "wkumari",
       "authorAssociation": "OWNER",
       "assignees": [
@@ -236,19 +236,55 @@
       "labels": [],
       "body": "",
       "createdAt": "2024-10-05T17:08:14Z",
-      "updatedAt": "2024-10-05T17:12:51Z",
+      "updatedAt": "2024-10-11T14:52:41Z",
       "baseRepository": "wkumari/draft-wkumari-intarea-safe-limited-domains",
       "baseRefName": "main",
       "baseRefOid": "73db2dd8d0b5d15ffe5377ad56701bcfc8ea45b1",
       "headRepository": "wkumari/draft-wkumari-intarea-safe-limited-domains",
       "headRefName": "donald_edits",
-      "headRefOid": "1d6266500e659dbd46e08c4ccd3931a9be8a1e88",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "9c07fa9993281b2663d815e4c588b79bc1796c18",
+      "closedAt": "2024-10-11T14:52:33Z",
+      "mergedAt": "2024-10-11T14:52:33Z",
+      "mergedBy": "wkumari",
+      "mergeCommit": {
+        "oid": "10d8bc0dea915f8948c137a47a71e822369c841c"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOLB9RhM6M2BdT",
+          "commit": {
+            "abbreviatedOid": "1d62665"
+          },
+          "author": "sureshkrishnan",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Looks good overall, but I think we need some more nuanced text in the security considerations section. The point I would like to emphasize there is that something bad *might* happen if the protocol leaks and the current text does not make it optional. I will submit a PR with a slight change.",
+          "createdAt": "2024-10-11T14:38:26Z",
+          "updatedAt": "2024-10-11T14:38:26Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOLB9RhM6M2C2B",
+          "commit": {
+            "abbreviatedOid": "1d62665"
+          },
+          "author": "sureshkrishnan",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2024-10-11T14:41:02Z",
+          "updatedAt": "2024-10-11T14:41:03Z",
+          "comments": [
+            {
+              "originalPosition": 320,
+              "body": "```suggestion\r\nProtocols are designated as \"limited domain\" because something unexpected might happen if\r\nthey leak outside of a domain with unified management. For example, VLAN or VPN\r\n```\r\n",
+              "createdAt": "2024-10-11T14:41:02Z",
+              "updatedAt": "2024-10-11T14:41:03Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
