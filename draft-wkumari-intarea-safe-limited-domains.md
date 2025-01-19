@@ -75,7 +75,7 @@ or require that operators of these limited domains //perfectly// add filters
 at all of the boundary nodes of the domain to protect the rest of the global
 Internet from these protocols and vice-versa.
 
-This document discusses the concepts of "fail-open" versus "fail- closed"
+This document discusses the concepts of "fail-open" versus "fail-closed"
 protocols for limited domains. It further specifies how to use layer-2
 protocol identification mechanisms for designing limited domain protocols
 that are safer to deploy.
@@ -233,7 +233,7 @@ satisfactorily and a specific EtherType is required.
 
 The main advantage of using an Extended EtherType with an IANA Protocol Number,
 as shown in Figure 2, is that such a number can be allocated by IANA with
-Expert Review based on an Internet Draft and are thus relatively easy to
+Expert Review based on an Internet Draft and is thus relatively easy to
 obtain. The main disadvantage is that the protocol identification is 5 bytes
 longer than a specific dedicated EtherType.
 
