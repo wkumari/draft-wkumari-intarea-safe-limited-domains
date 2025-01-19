@@ -5,13 +5,13 @@
 Internet Area Working Group                                    W. Kumari
 Internet-Draft                                               Google, LLC
 Intended status: Standards Track                               A. Alston
-Expires: 14 April 2025                   Liquid Intelligent Technologies
+Expires: 23 July 2025                    Liquid Intelligent Technologies
                                                                É. Vyncke
                                                              S. Krishnan
                                                                    Cisco
                                                              D. Eastlake
                                                              Independent
-                                                         11 October 2024
+                                                         19 January 2025
 
 
                         Safe(r) Limited Domains
@@ -59,11 +59,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 April 2025.
+   This Internet-Draft will expire on 23 July 2025.
 
 Copyright Notice
 
-   Copyright (c) 2024 IETF Trust and the persons identified as the
+   Copyright (c) 2025 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -252,9 +252,9 @@ Table of Contents
    The main advantage of using an Extended EtherType with an IANA
    Protocol Number, as shown in Figure 2, is that such a number can be
    allocated by IANA with Expert Review based on an Internet Draft and
-   are thus relatively easy to obtain.  The main disadvantage is that
-   the protocol identification is 5 bytes longer than a specific
-   dedicated EtherType.
+   is thus relatively easy to obtain.  The main disadvantage is that the
+   protocol identification is 5 bytes longer than a specific dedicated
+   EtherType.
 
 5.2.  Specific EtherType Protocol Identification
 
