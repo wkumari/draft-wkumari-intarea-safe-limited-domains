@@ -13,14 +13,14 @@
 <meta content='
        There is a trend towards documents describing protocols that are only intended
 to be used within "limited domains".  These documents often do not clearly
-define how the boundary of the limited domain is implemented and enforced,
-or require that operators of these limited domains //perfectly// add filters
-at all of the boundary nodes of the domain to protect the rest of the global
+define how the boundary of the limited domain is implemented and enforced, or
+require that operators of these limited domains //perfectly// add filters at
+all of the boundary nodes of the domain to protect the rest of the global
 Internet from these protocols and vice-versa. 
        This document discusses the concepts of "fail-open" versus "fail-closed"
-protocols for limited domains. It further specifies how to use layer-2
-protocol identification mechanisms for designing limited domain protocols
-that are safer to deploy. 
+protocols for limited domains. It further specifies how to use layer-2 protocol
+identification mechanisms for designing limited domain protocols that are safer
+to deploy. 
     ' name="description">
 <meta content="xml2rfc 3.25.0" name="generator">
 <meta content="Internet-Draft" name="keyword">
@@ -1061,7 +1061,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Kumari, et al.</td>
-<td class="center">Expires 23 July 2025</td>
+<td class="center">Expires 24 July 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1074,12 +1074,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-wkumari-intarea-safe-limited-domains-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-01-19" class="published">19 January 2025</time>
+<time datetime="2025-01-20" class="published">20 January 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-07-23">23 July 2025</time></dd>
+<dd class="expires"><time datetime="2025-07-24">24 July 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1110,14 +1110,14 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">There is a trend towards documents describing protocols that are only intended
 to be used within "limited domains".  These documents often do not clearly
-define how the boundary of the limited domain is implemented and enforced,
-or require that operators of these limited domains //perfectly// add filters
-at all of the boundary nodes of the domain to protect the rest of the global
+define how the boundary of the limited domain is implemented and enforced, or
+require that operators of these limited domains //perfectly// add filters at
+all of the boundary nodes of the domain to protect the rest of the global
 Internet from these protocols and vice-versa.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 <p id="section-abstract-2">This document discusses the concepts of "fail-open" versus "fail-closed"
-protocols for limited domains. It further specifies how to use layer-2
-protocol identification mechanisms for designing limited domain protocols
-that are safer to deploy.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+protocols for limited domains. It further specifies how to use layer-2 protocol
+identification mechanisms for designing limited domain protocols that are safer
+to deploy.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-discussion-venues">
@@ -1149,7 +1149,7 @@ that are safer to deploy.<a href="#section-abstract-2" class="pilcrow">¶</a></p
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 23 July 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 24 July 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1236,15 +1236,14 @@ that are safer to deploy.<a href="#section-abstract-2" class="pilcrow">¶</a></p
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1"><span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span> discusses the concept of "limited domains", provides
-examples of limited domains, as well as Examples of Limited Domain
-Solutions, including Service Function Chaining (SFC <span>[<a href="#RFC7665" class="cite xref">RFC7665</a>]</span> ), Segment
-Routing, "Creative uses of IPv6 features" (including Extension
-headers, e.g., for in situ Operations, Administration, and
-maintenance <span>[<a href="#RFC9378" class="cite xref">RFC9378</a>]</span>).<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">In order to provide context, this document will quote extensively
-from <span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span>, but it is assumed that the reader will actually read
-<span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span> in its entirety.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-1"><span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span> discusses the concept of "limited domains", provides examples of
+limited domains, as well as Examples of Limited Domain Solutions, including
+Service Function Chaining (SFC <span>[<a href="#RFC7665" class="cite xref">RFC7665</a>]</span> ), Segment Routing, "Creative uses
+of IPv6 features" (including Extension headers, e.g., for in situ Operations,
+Administration, and maintenance <span>[<a href="#RFC9378" class="cite xref">RFC9378</a>]</span>).<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">In order to provide context, this document will quote extensively from
+<span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span>, but it is assumed that the reader will actually read <span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span>
+in its entirety.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3"><span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span> Section 3, notes:<a href="#section-1-3" class="pilcrow">¶</a></p>
 <ul class="normal ulEmpty">
 <li class="normal ulEmpty" id="section-1-4.1">
@@ -1268,11 +1267,10 @@ nodes must be explicitly configured to handle a given limited-domain
 protocol, for example, by installing a specific protocol handler.<a href="#section-1-6.1.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
-<p id="section-1-7">This document addresses the problem of "leakage" of limited domain
-protocols by providing a mechanism so that nodes must be explicitly
-configured to handle the given limited-domain protocol ("fail-
-closed"), rather than relying on the network operator to take active
-steps to protect the boundary ("fail-open").<a href="#section-1-7" class="pilcrow">¶</a></p>
+<p id="section-1-7">This document addresses the problem of "leakage" of limited domain protocols by
+providing a mechanism so that nodes must be explicitly configured to handle the
+given limited-domain protocol ("fail- closed"), rather than relying on the
+network operator to take active steps to protect the boundary ("fail-open").<a href="#section-1-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="conventions-and-definitions">
@@ -1291,38 +1289,34 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       <h2 id="name-fail-open-versus-fail-close">
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-fail-open-versus-fail-close" class="section-name selfRef">Fail-open versus Fail-closed</a>
       </h2>
-<p id="section-3-1">Protocols can be broadly classified as either "fail-open" or "fail-
-closed".  Fail-closed protocols are those that require explicit
-interface or device-wide configuration to enable them to be accepted
-or processed when received on an interface.  A classic example of a
-fail-closed protocol is MPLS (<span>[<a href="#RFC3031" class="cite xref">RFC3031</a>]</span>): In order to allow MPLS to
-transit an interface, the operator must enable the MPLS protocol on
-that interface and on the device itself.  This ensures that outside
-MPLS traffic does not leak in.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">Fail-open protocols are those that require explicit configuration in
-order to ensure that they do not leak out of a domain, for example,
-through the application of filters.  An example of a fail-open
-protocol is SRv6 - in order to ensure that SRv6 traffic does not leak
-out of a network, the operator must explicitly filter this traffic,
-and, in order to ensure that SRv6 traffic does not leak in, the
-operator must explicitly filter SRv6 traffic.<a href="#section-3-2" class="pilcrow">¶</a></p>
-<p id="section-3-3">Fail-open protocols are inherently riskier than fail-closed
-protocols, as they rely on perfect configuration of filters on all
-interfaces at the boundary of a domain, and, if the filters are
-removed for any reason (for example, during troubleshooting), there
-is a risk of inbound or outbound leaks.  In addition, some devices or
-interfaces may have limitations in the size and complexity of filters
-that can be applied, and so adding new filter entries to limit leaks
-of a new protocol may not be possible.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-1">Protocols can be broadly classified as either "fail-open" or "fail- closed".
+Fail-closed protocols are those that require explicit interface or device-wide
+configuration to enable them to be accepted or processed when received on an
+interface.  A classic example of a fail-closed protocol is MPLS (<span>[<a href="#RFC3031" class="cite xref">RFC3031</a>]</span>):
+In order to allow MPLS to transit an interface, the operator must enable the
+MPLS protocol on that interface and on the device itself.  This ensures that
+outside MPLS traffic does not leak in.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">Fail-open protocols are those that require explicit configuration in order to
+ensure that they do not leak out of a domain, for example, through the
+application of filters.  An example of a fail-open protocol is SRv6 - in order
+to ensure that SRv6 traffic does not leak out of a network, the operator must
+explicitly filter this traffic, and, in order to ensure that SRv6 traffic does
+not leak in, the operator must explicitly filter SRv6 traffic.<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-3">Fail-open protocols are inherently riskier than fail-closed protocols, as they
+rely on perfect configuration of filters on all interfaces at the boundary of a
+domain, and, if the filters are removed for any reason (for example, during
+troubleshooting), there is a risk of inbound or outbound leaks.  In addition,
+some devices or interfaces may have limitations in the size and complexity of
+filters that can be applied, and so adding new filter entries to limit leaks of
+a new protocol may not be possible.<a href="#section-3-3" class="pilcrow">¶</a></p>
 <p id="section-3-4">Fail-closed protocols, on the other hand, do not require any explicit
-filtering.  In order for the protocol to be accepted and processed
-when received on an interface, the operator must explicitly enable
-the protocol on that interface and on the device itself.  In
-addition, there is less risk of operational mistakes, as it does not
-rely on filters that may be limited in number and complexity.
-Finally, fail-closed protocols do not require that operators of
-networks outside of the limited domain implement filters to protect
-their networks from the limited domain traffic.<a href="#section-3-4" class="pilcrow">¶</a></p>
+filtering.  In order for the protocol to be accepted and processed when
+received on an interface, the operator must explicitly enable the protocol on
+that interface and on the device itself.  In addition, there is less risk of
+operational mistakes, as it does not rely on filters that may be limited in
+number and complexity. Finally, fail-closed protocols do not require that
+operators of networks outside of the limited domain implement filters to
+protect their networks from the limited domain traffic.<a href="#section-3-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="making-a-layer-3-type-limited-domain-protocol-fail-closed">
@@ -1413,9 +1407,9 @@ satisfactorily and a specific EtherType is required.<a href="#section-5-5" class
         </h3>
 <p id="section-5.1-1">The main advantage of using an Extended EtherType with an IANA Protocol Number,
 as shown in Figure 2, is that such a number can be allocated by IANA with
-Expert Review based on an Internet Draft and is thus relatively easy to
-obtain. The main disadvantage is that the protocol identification is 5 bytes
-longer than a specific dedicated EtherType.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+Expert Review based on an Internet Draft and is thus relatively easy to obtain.
+The main disadvantage is that the protocol identification is 5 bytes longer
+than a specific dedicated EtherType.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="specific-ethertype-protocol-identification">
@@ -1545,11 +1539,11 @@ misinterpretation.<a href="#section-6-1" class="pilcrow">¶</a></p>
       <h2 id="name-acknowledgments">
 <a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
       </h2>
-<p id="appendix-A-1">Much thanks to Brian Carpenter, for his review and comments.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
-<p id="appendix-A-2">Also much thanks to Deborah Brungard, for her review and comments.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
-<p id="appendix-A-3">Also much thanks to everyone else with whom we have discussed this topic; I've
+<p id="appendix-A-1">Much thanks to Deborah Brungard and Brian Carpenter, for their review and
+comments.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-2">Also much thanks to everyone else with whom we have discussed this topic; I've
 had numerous discussions with many many people on this, and I'm sure that I've
-forgotten some of them. Apologies if you were one of them.<a href="#appendix-A-3" class="pilcrow">¶</a></p>
+forgotten some of them. Apologies if you were one of them.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="changelog">
@@ -1565,7 +1559,8 @@ forgotten some of them. Apologies if you were one of them.<a href="#appendix-A-3
               <p id="appendix-B-1.1.2.1.1">Add Donald Eastlake as an author.<a href="#appendix-B-1.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="appendix-B-1.1.2.2">
-              <p id="appendix-B-1.1.2.2.1">Substantial re-write and expansion of material concerning specific and Extended EtherType protocol identification.<a href="#appendix-B-1.1.2.2.1" class="pilcrow">¶</a></p>
+              <p id="appendix-B-1.1.2.2.1">Substantial re-write and expansion of material concerning specific and
+Extended EtherType protocol identification.<a href="#appendix-B-1.1.2.2.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="appendix-B-1.1.2.3">
               <p id="appendix-B-1.1.2.3.1">Add initial Security Considerations text.<a href="#appendix-B-1.1.2.3.1" class="pilcrow">¶</a></p>
