@@ -70,31 +70,30 @@ informative:
 
 There is a trend towards documents describing protocols that are only intended
 to be used within "limited domains".  These documents often do not clearly
-define how the boundary of the limited domain is implemented and enforced,
-or require that operators of these limited domains //perfectly// add filters
-at all of the boundary nodes of the domain to protect the rest of the global
+define how the boundary of the limited domain is implemented and enforced, or
+require that operators of these limited domains //perfectly// add filters at
+all of the boundary nodes of the domain to protect the rest of the global
 Internet from these protocols and vice-versa.
 
 This document discusses the concepts of "fail-open" versus "fail-closed"
-protocols for limited domains. It further specifies how to use layer-2
-protocol identification mechanisms for designing limited domain protocols
-that are safer to deploy.
+protocols for limited domains. It further specifies how to use layer-2 protocol
+identification mechanisms for designing limited domain protocols that are safer
+to deploy.
 
 
 --- middle
 
 # Introduction
 
-{{RFC8799}} discusses the concept of "limited domains", provides
-examples of limited domains, as well as Examples of Limited Domain
-Solutions, including Service Function Chaining (SFC {{RFC7665}} ), Segment
-Routing, "Creative uses of IPv6 features" (including Extension
-headers, e.g., for in situ Operations, Administration, and
-maintenance {{RFC9378}}).
+{{RFC8799}} discusses the concept of "limited domains", provides examples of
+limited domains, as well as Examples of Limited Domain Solutions, including
+Service Function Chaining (SFC {{RFC7665}} ), Segment Routing, "Creative uses
+of IPv6 features" (including Extension headers, e.g., for in situ Operations,
+Administration, and maintenance {{RFC9378}}).
 
-In order to provide context, this document will quote extensively
-from {{RFC8799}}, but it is assumed that the reader will actually read
-{{RFC8799}} in its entirety.
+In order to provide context, this document will quote extensively from
+{{RFC8799}}, but it is assumed that the reader will actually read {{RFC8799}}
+in its entirety.
 
 
 
@@ -117,11 +116,10 @@ Notably, in {{RFC8799}} Section 2, states:
 > nodes must be explicitly configured to handle a given limited-domain
 > protocol, for example, by installing a specific protocol handler.
 
-This document addresses the problem of "leakage" of limited domain
-protocols by providing a mechanism so that nodes must be explicitly
-configured to handle the given limited-domain protocol ("fail-
-closed"), rather than relying on the network operator to take active
-steps to protect the boundary ("fail-open").
+This document addresses the problem of "leakage" of limited domain protocols by
+providing a mechanism so that nodes must be explicitly configured to handle the
+given limited-domain protocol ("fail- closed"), rather than relying on the
+network operator to take active steps to protect the boundary ("fail-open").
 
 
 # Conventions and Definitions
@@ -130,41 +128,37 @@ steps to protect the boundary ("fail-open").
 
 # Fail-open versus Fail-closed
 
-Protocols can be broadly classified as either "fail-open" or "fail-
-closed".  Fail-closed protocols are those that require explicit
-interface or device-wide configuration to enable them to be accepted
-or processed when received on an interface.  A classic example of a
-fail-closed protocol is MPLS ({{RFC3031}}): In order to allow MPLS to
-transit an interface, the operator must enable the MPLS protocol on
-that interface and on the device itself.  This ensures that outside
-MPLS traffic does not leak in.
+Protocols can be broadly classified as either "fail-open" or "fail- closed".
+Fail-closed protocols are those that require explicit interface or device-wide
+configuration to enable them to be accepted or processed when received on an
+interface.  A classic example of a fail-closed protocol is MPLS ({{RFC3031}}):
+In order to allow MPLS to transit an interface, the operator must enable the
+MPLS protocol on that interface and on the device itself.  This ensures that
+outside MPLS traffic does not leak in.
 
-Fail-open protocols are those that require explicit configuration in
-order to ensure that they do not leak out of a domain, for example,
-through the application of filters.  An example of a fail-open
-protocol is SRv6 - in order to ensure that SRv6 traffic does not leak
-out of a network, the operator must explicitly filter this traffic,
-and, in order to ensure that SRv6 traffic does not leak in, the
-operator must explicitly filter SRv6 traffic.
+Fail-open protocols are those that require explicit configuration in order to
+ensure that they do not leak out of a domain, for example, through the
+application of filters.  An example of a fail-open protocol is SRv6 - in order
+to ensure that SRv6 traffic does not leak out of a network, the operator must
+explicitly filter this traffic, and, in order to ensure that SRv6 traffic does
+not leak in, the operator must explicitly filter SRv6 traffic.
 
-Fail-open protocols are inherently riskier than fail-closed
-protocols, as they rely on perfect configuration of filters on all
-interfaces at the boundary of a domain, and, if the filters are
-removed for any reason (for example, during troubleshooting), there
-is a risk of inbound or outbound leaks.  In addition, some devices or
-interfaces may have limitations in the size and complexity of filters
-that can be applied, and so adding new filter entries to limit leaks
-of a new protocol may not be possible.
+Fail-open protocols are inherently riskier than fail-closed protocols, as they
+rely on perfect configuration of filters on all interfaces at the boundary of a
+domain, and, if the filters are removed for any reason (for example, during
+troubleshooting), there is a risk of inbound or outbound leaks.  In addition,
+some devices or interfaces may have limitations in the size and complexity of
+filters that can be applied, and so adding new filter entries to limit leaks of
+a new protocol may not be possible.
 
 Fail-closed protocols, on the other hand, do not require any explicit
-filtering.  In order for the protocol to be accepted and processed
-when received on an interface, the operator must explicitly enable
-the protocol on that interface and on the device itself.  In
-addition, there is less risk of operational mistakes, as it does not
-rely on filters that may be limited in number and complexity.
-Finally, fail-closed protocols do not require that operators of
-networks outside of the limited domain implement filters to protect
-their networks from the limited domain traffic.
+filtering.  In order for the protocol to be accepted and processed when
+received on an interface, the operator must explicitly enable the protocol on
+that interface and on the device itself.  In addition, there is less risk of
+operational mistakes, as it does not rely on filters that may be limited in
+number and complexity. Finally, fail-closed protocols do not require that
+operators of networks outside of the limited domain implement filters to
+protect their networks from the limited domain traffic.
 
 
 # Making a layer-3 type limited-domain protocol fail-closed
@@ -233,9 +227,9 @@ satisfactorily and a specific EtherType is required.
 
 The main advantage of using an Extended EtherType with an IANA Protocol Number,
 as shown in Figure 2, is that such a number can be allocated by IANA with
-Expert Review based on an Internet Draft and is thus relatively easy to
-obtain. The main disadvantage is that the protocol identification is 5 bytes
-longer than a specific dedicated EtherType.
+Expert Review based on an Internet Draft and is thus relatively easy to obtain.
+The main disadvantage is that the protocol identification is 5 bytes longer
+than a specific dedicated EtherType.
 
 ## Specific EtherType Protocol Identification
 
@@ -285,9 +279,8 @@ This document has no IANA actions.
 # Acknowledgments
 {:numbered="false"}
 
-Much thanks to Brian Carpenter, for his review and comments.
-
-Also much thanks to Deborah Brungard, for her review and comments.
+Much thanks to Deborah Brungard and Brian Carpenter, for their review and
+comments.
 
 Also much thanks to everyone else with whom we have discussed this topic; I've
 had numerous discussions with many many people on this, and I'm sure that I've
@@ -298,7 +291,8 @@ forgotten some of them. Apologies if you were one of them.
 
 * 01-02:
   * Add Donald Eastlake as an author.
-  * Substantial re-write and expansion of material concerning specific and Extended EtherType protocol identification.
+  * Substantial re-write and expansion of material concerning specific and
+    Extended EtherType protocol identification.
   * Add initial Security Considerations text.
 
 
