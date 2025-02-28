@@ -5,7 +5,7 @@
 Internet Area Working Group                                    W. Kumari
 Internet-Draft                                               Google, LLC
 Intended status: Standards Track                               A. Alston
-Expires: 1 September 2025                Liquid Intelligent Technologies
+Expires: 1 September 2025                                Alston Networks
                                                                É. Vyncke
                                                              S. Krishnan
                                                                    Cisco
@@ -170,8 +170,9 @@ Table of Contents
 
 3.  Some types of limited domain protocols
 
-   [RFC8799] Section 3 discusses some examples of Limited Domain
-   Requirements.
+   [RFC8799] Section 3 discusses some examples of Limited Domains, based
+   mainly on the network type (e.g. Home, Sensor Networks, Data Centers,
+   etc).
 
    This section instead classifies the types of limited domain protocols
    based more on their intended use, and technology.
@@ -263,7 +264,7 @@ Table of Contents
    a unique layer-2 protocol identifier, usually an EtherType.  This
    mechanism is used by MPLS.  In modern router and hosts, if such a
    protocol identifier is not enabled on an interface, then the Ethernet
-   chipset will ignore the frame, and the node will not see or process
+   chip-set will ignore the frame, and the node will not see or process
    it.  Thus, it is necessary to specifically enable the layer-2
    protocol identifier on all relevant interfaces inside the limited
    domain, and the protocol will be blocked at the domain boundary where
@@ -487,8 +488,8 @@ Authors' Addresses
 
 
    Andrew Alston
-   Liquid Intelligent Technologies
-   Email: andrew-ietf@liquid.tech
+   Alston Networks
+   Email: alston.networks@gmail.com
 
 
    Éric Vyncke
