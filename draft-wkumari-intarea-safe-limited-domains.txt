@@ -5,13 +5,13 @@
 Internet Area Working Group                                    W. Kumari
 Internet-Draft                                               Google, LLC
 Intended status: Standards Track                               A. Alston
-Expires: 24 July 2025                    Liquid Intelligent Technologies
+Expires: 1 September 2025                Liquid Intelligent Technologies
                                                                É. Vyncke
                                                              S. Krishnan
                                                                    Cisco
                                                              D. Eastlake
                                                              Independent
-                                                         20 January 2025
+                                                        28 February 2025
 
 
                         Safe(r) Limited Domains
@@ -19,18 +19,22 @@ Expires: 24 July 2025                    Liquid Intelligent Technologies
 
 Abstract
 
-   There is a trend towards documents describing protocols that are only
-   intended to be used within "limited domains".  These documents often
-   do not clearly define how the boundary of the limited domain is
-   implemented and enforced, or require that operators of these limited
-   domains //perfectly// add filters at all of the boundary nodes of the
-   domain to protect the rest of the global Internet from these
-   protocols and vice-versa.
+   Documents describing protocols that are only intended to be used
+   within "limited domains" often do not clearly define how the boundary
+   of the limited domain is implemented and enforced, or require that
+   operators of these limited domains perfectly filter at all of the
+   boundary nodes of the domain to protect the rest of the global
+   Internet from these protocols and vice-versa.
 
-   This document discusses the concepts of "fail-open" versus "fail-
-   closed" protocols for limited domains.  It further specifies how to
-   use layer-2 protocol identification mechanisms for designing limited
-   domain protocols that are safer to deploy.
+   This document discusses some design principles and offers mechanisms
+   to allow protocols that are designed to operate in a limited domain
+   "fail-closed" rather than "fail-open", thereby making these protocols
+   safer to deploy on the Internet.
+
+   These mechanism are not applicable to all protocols intended for use
+   in a limited domain, but if implemented on certain classes of
+   protocols, they can significantly reduce the risk of leakage of into
+   the global Internet.
 
 Discussion Venues
 
@@ -59,7 +63,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 July 2025.
+   This Internet-Draft will expire on 1 September 2025.
 
 Copyright Notice
 
@@ -79,16 +83,20 @@ Table of Contents
 
    1.  Introduction
    2.  Conventions and Definitions
-   3.  Fail-open versus Fail-closed
-   4.  Making a layer-3 type limited-domain protocol fail-closed
-   5.  Ethernet Protocol Identification
-     5.1.  Extended EtherType Protocol Identification
-     5.2.  Specific EtherType Protocol Identification
-   6.  Security Considerations
-   7.  IANA Considerations
-   8.  References
-     8.1.  Normative References
-     8.2.  Informative References
+   3.  Some types of limited domain protocols
+   4.  Fail-open versus Fail-closed
+   5.  IP TTL Limiting
+   6.  IP Multicast Addressing
+   7.  IPv6 Link Local Addresses
+   8.  Making a layer-3 type limited-domain protocol fail-closed
+   9.  Ethernet Protocol Identification
+     9.1.  Extended EtherType Protocol Identification
+     9.2.  Specific EtherType Protocol Identification
+   10. Security Considerations
+   11. IANA Considerations
+   12. References
+     12.1.  Normative References
+     12.2.  Informative References
    Acknowledgments
    Changelog
    Authors' Addresses
@@ -127,11 +135,30 @@ Table of Contents
       be explicitly configured to handle a given limited-domain
       protocol, for example, by installing a specific protocol handler.
 
-   This document addresses the problem of "leakage" of limited domain
-   protocols by providing a mechanism so that nodes must be explicitly
-   configured to handle the given limited-domain protocol ("fail-
-   closed"), rather than relying on the network operator to take active
-   steps to protect the boundary ("fail-open").
+   In addition, [RFC8799] Section 6, notes:
+
+      Today, where limited domains exist, they are essentially created
+      by careful configuration of boundary routers and firewalls.  If a
+      domain is characterized by one or more address prefixes, address
+      assignment to hosts must also be carefully managed.  This is an
+      error-prone method, and a combination of configuration errors and
+      default routing can lead to unwanted traffic escaping the domain.
+      Our basic assumption is therefore that it should be possible for
+      domains to be created and managed automatically, with minimal
+      human configuration.  We now discuss requirements for automating
+      domain creation and management.
+
+   This document discusses some of the mechanisms which protocol
+   designers can use to limit the scope of their protocols to a single
+   link.  If the protocol is intended to be used in across multiple
+   links, but should not be forwarded beyond a single administrative
+   domain, then the protocol designer should consider making the
+   protocol "fail-closed" rather than "fail-open", as described below.
+
+   This is primarily targeted towards protocols which are intended to
+   primarily be used within a single LAN segment, or for protocols which
+   provide a transport type service (similar to MPLS or SRv6) and are
+   not intended to remain within a single administrative domain..
 
 2.  Conventions and Definitions
 
@@ -141,7 +168,25 @@ Table of Contents
    BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
-3.  Fail-open versus Fail-closed
+3.  Some types of limited domain protocols
+
+   [RFC8799] Section 3 discusses some examples of Limited Domain
+   Requirements.
+
+   This section instead classifies the types of limited domain protocols
+   based more on their intended use, and technology.
+
+   Broadly speaking, there are two types of limited domain protocols:
+
+   *  Layer-2 type limited domain protocols: These are protocols that
+      are intended to be used within a single LAN segment.
+
+   *  Transport type service (for example MPLS and SRv6): These
+      protocols are intended to provide a transport service, and are
+      intended to remain within a single administrative domain such as a
+      Enterprise or a Service Provider network.
+
+4.  Fail-open versus Fail-closed
 
    Protocols can be broadly classified as either "fail-open" or "fail-
    closed".  Fail-closed protocols are those that require explicit
@@ -179,7 +224,40 @@ Table of Contents
    networks outside of the limited domain implement filters to protect
    their networks from the limited domain traffic.
 
-4.  Making a layer-3 type limited-domain protocol fail-closed
+5.  IP TTL Limiting
+
+   Some limited domain protocols are intended to only be used within a
+   single IP subnet.  In these cases, it may be possible to use IP TTL
+   limiting to ensure that the protocol does not leak out of the subnet.
+
+   By specifying that the IP TTL of packets carrying the protocol be set
+   to a value of 1, it is possible to ensure that the protocol does not
+   leak out of the subnet.  This is because routers will decrement the
+   TTL of packets by 1 when forwarding them, and discard the packet when
+   it reaches zero.
+
+6.  IP Multicast Addressing
+
+   Some protocols (e.g OSPF) use addresses from the IP Local Network
+   Control Block [RFC5771], (224.0.0/24).  In addition to providing a
+   discovery mechanism, this traffic is not forwarded off-link,
+   providing a simple and effective way to limit the scope of the
+   protocol.
+
+   In some (rare) cases, IPv4 "Link Local" addresses ([RFC3927] may be
+   an appropriate mechanism to limit the scope of the protocol, but this
+   such a niche case that it is not discussed further here.
+
+7.  IPv6 Link Local Addresses
+
+   Link-Local IPv6 Unicast Addresses ([RFC4291] Section 2.5.6) are used
+   for communication between nodes on a single link.  They are not
+   routable and are not forwarded by routers.  In cases where a limited-
+   domain protocol is intended to be used only within a single link, the
+   use of IPv6 Link-Local addresses can be an effective way to limit the
+   scope of the protocol.
+
+8.  Making a layer-3 type limited-domain protocol fail-closed
 
    One way to make a limited-domain protocol fail-closed is to assign it
    a unique layer-2 protocol identifier, usually an EtherType.  This
@@ -201,7 +279,7 @@ Table of Contents
    and so cryptographically enforced mechanisms may need to be used
    instead (e.g., as done used by ANIMA in [RFC8994] and [RFC8995]).
 
-5.  Ethernet Protocol Identification
+9.  Ethernet Protocol Identification
 
    Figure 1 shows the general format of Ethernet frames.  The relevant
    protocol identification field occurs after the destination and source
@@ -247,7 +325,7 @@ Table of Contents
    EtherType SHOULD be used unless there is a strong reason why it will
    not work satisfactorily and a specific EtherType is required.
 
-5.1.  Extended EtherType Protocol Identification
+9.1.  Extended EtherType Protocol Identification
 
    The main advantage of using an Extended EtherType with an IANA
    Protocol Number, as shown in Figure 2, is that such a number can be
@@ -256,7 +334,7 @@ Table of Contents
    protocol identification is 5 bytes longer than a specific dedicated
    EtherType.
 
-5.2.  Specific EtherType Protocol Identification
+9.2.  Specific EtherType Protocol Identification
 
    The primary disadvantage of using a specific EtherType, as opposed to
    an Extended EtherType, is that assignment of such an EtherType is
@@ -284,7 +362,7 @@ Table of Contents
    5 bytes relative to the use of the Extended EtherType with a protocol
    number under the IANA OUI.
 
-6.  Security Considerations
+10.  Security Considerations
 
    Protocols are designated as "limited domain" because something
    unexpected might happen if they leak outside of a domain with unified
@@ -295,13 +373,13 @@ Table of Contents
    "fail closed" barrier at the domain border can significantly improve
    security by eliminating the opportunity for such misinterpretation.
 
-7.  IANA Considerations
+11.  IANA Considerations
 
    This document has no IANA actions.
 
-8.  References
+12.  References
 
-8.1.  Normative References
+12.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -316,7 +394,7 @@ Table of Contents
               Protocols", RFC 8799, DOI 10.17487/RFC8799, July 2020,
               <https://www.rfc-editor.org/rfc/rfc8799>.
 
-8.2.  Informative References
+12.2.  Informative References
 
    [IANA_EtherType]
               "IANA EtherType Registry", Web 
@@ -332,6 +410,20 @@ Table of Contents
               Label Switching Architecture", RFC 3031,
               DOI 10.17487/RFC3031, January 2001,
               <https://www.rfc-editor.org/rfc/rfc3031>.
+
+   [RFC3927]  Cheshire, S., Aboba, B., and E. Guttman, "Dynamic
+              Configuration of IPv4 Link-Local Addresses", RFC 3927,
+              DOI 10.17487/RFC3927, May 2005,
+              <https://www.rfc-editor.org/rfc/rfc3927>.
+
+   [RFC4291]  Hinden, R. and S. Deering, "IP Version 6 Addressing
+              Architecture", RFC 4291, DOI 10.17487/RFC4291, February
+              2006, <https://www.rfc-editor.org/rfc/rfc4291>.
+
+   [RFC5771]  Cotton, M., Vegoda, L., and D. Meyer, "IANA Guidelines for
+              IPv4 Multicast Address Assignments", BCP 51, RFC 5771,
+              DOI 10.17487/RFC5771, March 2010,
+              <https://www.rfc-editor.org/rfc/rfc5771>.
 
    [RFC7665]  Halpern, J., Ed. and C. Pignataro, Ed., "Service Function
               Chaining (SFC) Architecture", RFC 7665,
