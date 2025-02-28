@@ -23,8 +23,8 @@ author:
   -
     ins: A. Alston
     name: Andrew Alston
-    organization: Liquid Intelligent Technologies
-    email: andrew-ietf@liquid.tech
+    organization: Alston Networks
+    email: alston.networks@gmail.com
   -
     ins: É. Vyncke
     name: Éric Vyncke
@@ -149,7 +149,8 @@ single administrative domain..
 
 # Some types of limited domain protocols
 
-{{RFC8799}} Section 3 discusses some examples of Limited Domain Requirements.
+{{RFC8799}} Section 3 discusses some examples of Limited Domains, based mainly
+on the network type (e.g. Home, Sensor Networks, Data Centers, etc).
 
 This section instead classifies the types of limited domain protocols based
 more on their intended use, and technology.
@@ -234,7 +235,7 @@ an effective way to limit the scope of the protocol.
 One way to make a limited-domain protocol fail-closed is to assign it a unique
 layer-2 protocol identifier, usually an EtherType. This mechanism is used by
 MPLS.  In modern router and hosts, if such a protocol identifier is not enabled
-on an interface, then the Ethernet chipset will ignore the frame, and the node
+on an interface, then the Ethernet chip-set will ignore the frame, and the node
 will not see or process it. Thus, it is necessary to specifically enable the
 layer-2 protocol identifier on all relevant interfaces inside the limited
 domain, and the protocol will be blocked at the domain boundary where the
