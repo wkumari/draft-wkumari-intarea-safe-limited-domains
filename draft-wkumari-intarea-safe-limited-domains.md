@@ -44,10 +44,13 @@ author:
 normative:
   RFC8799:
 informative:
+  RFC3031:
+  RFC3927:
+  RFC4291:
+  RFC5771:
   RFC7665:
   RFC8994:
   RFC8995:
-  RFC3031:
   RFC9378:
   RFC9542:
   IESG_EtherType:
@@ -68,18 +71,20 @@ informative:
 
 --- abstract
 
-There is a trend towards documents describing protocols that are only intended
-to be used within "limited domains".  These documents often do not clearly
-define how the boundary of the limited domain is implemented and enforced, or
-require that operators of these limited domains //perfectly// add filters at
-all of the boundary nodes of the domain to protect the rest of the global
-Internet from these protocols and vice-versa.
+Documents describing protocols that are only intended to be used within
+"limited domains" often do not clearly define how the boundary of the limited
+domain is implemented and enforced, or require that operators of these limited
+domains perfectly filter at all of the boundary nodes of the domain to
+protect the rest of the global Internet from these protocols and vice-versa.
 
-This document discusses the concepts of "fail-open" versus "fail-closed"
-protocols for limited domains. It further specifies how to use layer-2 protocol
-identification mechanisms for designing limited domain protocols that are safer
-to deploy.
+This document discusses some design principles and offers mechanisms to
+allow protocols that are designed to operate in a limited domain "fail-closed"
+rather than "fail-open", thereby making these protocols safer to deploy on the
+Internet.
 
+These mechanism are not applicable to all protocols intended for use in a
+limited domain, but if implemented on certain classes of protocols, they  can
+significantly reduce the risk of leakage of into the global Internet.
 
 --- middle
 
@@ -94,8 +99,6 @@ Administration, and maintenance {{RFC9378}}).
 In order to provide context, this document will quote extensively from
 {{RFC8799}}, but it is assumed that the reader will actually read {{RFC8799}}
 in its entirety.
-
-
 
 {{RFC8799}} Section 3, notes:
 
@@ -116,19 +119,54 @@ Notably, in {{RFC8799}} Section 2, states:
 > nodes must be explicitly configured to handle a given limited-domain
 > protocol, for example, by installing a specific protocol handler.
 
-This document addresses the problem of "leakage" of limited domain protocols by
-providing a mechanism so that nodes must be explicitly configured to handle the
-given limited-domain protocol ("fail- closed"), rather than relying on the
-network operator to take active steps to protect the boundary ("fail-open").
+In addition, {{RFC8799}} Section 6, notes:
 
+> Today, where limited domains exist, they are essentially created by careful
+> configuration of boundary routers and firewalls. If a domain is characterized
+> by one or more address prefixes, address assignment to hosts must also be
+> carefully managed. This is an error-prone method, and a combination of
+> configuration errors and default routing can lead to unwanted traffic
+> escaping the domain. Our basic assumption is therefore that it should be
+> possible for domains to be created and managed automatically, with minimal
+> human configuration. We now discuss requirements for automating domain
+> creation and management.
+
+This document discusses some of the mechanisms which protocol designers can
+use to limit the scope of their protocols to a single link. If the protocol is
+intended to be used in across multiple links, but should not be forwarded
+beyond a single administrative domain, then the protocol designer should
+consider making the protocol "fail-closed" rather than "fail-open", as
+described below.
+
+This is primarily targeted towards protocols which are intended to primarily be
+used within a single LAN segment, or for protocols which provide a transport
+type service (similar to MPLS or SRv6) and are not intended to remain within a
+single administrative domain..
 
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
 
+# Some types of limited domain protocols
+
+{{RFC8799}} Section 3 discusses some examples of Limited Domain Requirements.
+
+This section instead classifies the types of limited domain protocols based
+more on their intended use, and technology.
+
+Broadly speaking, there are two types of limited domain protocols:
+
+* Layer-2 type limited domain protocols: These are protocols that are
+intended to be used within a single LAN segment.
+
+* Transport type service (for example MPLS and SRv6): These protocols are
+intended to provide a transport service, and are intended to remain
+within a single administrative domain such as a Enterprise or a Service
+Provider network.
+
 # Fail-open versus Fail-closed
 
-Protocols can be broadly classified as either "fail-open" or "fail- closed".
+Protocols can be broadly classified as either "fail-open" or "fail-closed".
 Fail-closed protocols are those that require explicit interface or device-wide
 configuration to enable them to be accepted or processed when received on an
 interface.  A classic example of a fail-closed protocol is MPLS ({{RFC3031}}):
@@ -159,6 +197,36 @@ operational mistakes, as it does not rely on filters that may be limited in
 number and complexity. Finally, fail-closed protocols do not require that
 operators of networks outside of the limited domain implement filters to
 protect their networks from the limited domain traffic.
+
+# IP TTL Limiting
+
+Some limited domain protocols are intended to only be used within a single IP
+subnet. In these cases, it may be possible to use
+IP TTL limiting to ensure that the protocol does not leak out of the subnet.
+
+By specifying that the IP TTL of packets carrying the protocol be set to a
+value of 1, it is possible to ensure that the protocol does not leak out of the
+subnet. This is because routers will decrement the TTL of packets by 1 when
+forwarding them, and discard the packet when it reaches zero.
+
+# IP Multicast Addressing
+
+Some protocols (e.g OSPF) use addresses from the IP Local Network Control
+Block {{RFC5771}}, (224.0.0/24). In addition to providing a discovery
+mechanism, this traffic is not forwarded off-link, providing a simple and
+effective way to limit the scope of the protocol.
+
+In some (rare) cases, IPv4 "Link Local" addresses ({{RFC3927}} may be an
+appropriate mechanism to limit the scope of the protocol, but this
+such a niche case that it is not discussed further here.
+
+# IPv6 Link Local Addresses
+
+Link-Local IPv6 Unicast Addresses ({{RFC4291}} Section 2.5.6) are used for
+communication between nodes on a single link. They are not routable and are not
+forwarded by routers. In cases where a limited-domain protocol is intended to
+be used only within a single link, the use of IPv6 Link-Local addresses can be
+an effective way to limit the scope of the protocol.
 
 
 # Making a layer-3 type limited-domain protocol fail-closed
