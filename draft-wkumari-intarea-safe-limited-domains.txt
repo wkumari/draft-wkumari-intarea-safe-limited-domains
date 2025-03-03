@@ -5,13 +5,13 @@
 Internet Area Working Group                                    W. Kumari
 Internet-Draft                                               Google, LLC
 Intended status: Standards Track                               A. Alston
-Expires: 1 September 2025                                Alston Networks
+Expires: 4 September 2025                                Alston Networks
                                                                É. Vyncke
                                                              S. Krishnan
                                                                    Cisco
                                                              D. Eastlake
                                                              Independent
-                                                        28 February 2025
+                                                            3 March 2025
 
 
                         Safe(r) Limited Domains
@@ -33,8 +33,7 @@ Abstract
 
    These mechanism are not applicable to all protocols intended for use
    in a limited domain, but if implemented on certain classes of
-   protocols, they can significantly reduce the risk of leakage of into
-   the global Internet.
+   protocols, they can significantly reduce the risks.
 
 Discussion Venues
 
@@ -63,7 +62,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 September 2025.
+   This Internet-Draft will expire on 4 September 2025.
 
 Copyright Notice
 
@@ -85,8 +84,8 @@ Table of Contents
    2.  Conventions and Definitions
    3.  Some types of limited domain protocols
    4.  Fail-open versus Fail-closed
-   5.  IP TTL Limiting
-   6.  IP Multicast Addressing
+   5.  IP Hop-Limit Limiting
+   6.  IPv4 Multicast Addressing
    7.  IPv6 Link Local Addresses
    8.  Making a layer-3 type limited-domain protocol fail-closed
    9.  Ethernet Protocol Identification
@@ -156,9 +155,10 @@ Table of Contents
    protocol "fail-closed" rather than "fail-open", as described below.
 
    This is primarily targeted towards protocols which are intended to
-   primarily be used within a single LAN segment, or for protocols which
-   provide a transport type service (similar to MPLS or SRv6) and are
-   not intended to remain within a single administrative domain..
+   primarily be used within a single layer-2 broadcast domain, or for
+   protocols which provide a transport type service (similar to MPLS or
+   SRv6) and are not intended to remain within a single administrative
+   domain.
 
 2.  Conventions and Definitions
 
@@ -225,19 +225,28 @@ Table of Contents
    networks outside of the limited domain implement filters to protect
    their networks from the limited domain traffic.
 
-5.  IP TTL Limiting
+5.  IP Hop-Limit Limiting
 
    Some limited domain protocols are intended to only be used within a
-   single IP subnet.  In these cases, it may be possible to use IP TTL
-   limiting to ensure that the protocol does not leak out of the subnet.
+   single IP subnet.  In these cases, it may be possible to use the IP
+   Hop-Limit to ensure that the protocol does not leak out of the
+   subnet.
 
-   By specifying that the IP TTL of packets carrying the protocol be set
-   to a value of 1, it is possible to ensure that the protocol does not
-   leak out of the subnet.  This is because routers will decrement the
-   TTL of packets by 1 when forwarding them, and discard the packet when
-   it reaches zero.
+   By specifying that the IP Hop-Limit of packets carrying the protocol
+   be set to a value of 1, it is possible to ensure that the protocol
+   does not leak out of the subnet.  This is because routers will
+   decrement the Hop-Limit of packets by 1 when forwarding them, and
+   discard the packet when it reaches zero.
 
-6.  IP Multicast Addressing
+   The approach of setting the IP Hop-Limit to 1 ensures that the
+   protocol does leave the subnet.  This is different from requiring the
+   received IP Hop-Limit has a value of 255, as used in [RFC3682], which
+   ensures that traffic cannot be spoofed from outside the subnet.
+
+   Which option to choose (if either) depends on the specific
+   requirements of the protocol.
+
+6.  IPv4 Multicast Addressing
 
    Some protocols (e.g OSPF) use addresses from the IP Local Network
    Control Block [RFC5771], (224.0.0/24).  In addition to providing a
@@ -411,6 +420,11 @@ Table of Contents
               Label Switching Architecture", RFC 3031,
               DOI 10.17487/RFC3031, January 2001,
               <https://www.rfc-editor.org/rfc/rfc3031>.
+
+   [RFC3682]  Gill, V., Heasley, J., and D. Meyer, "The Generalized TTL
+              Security Mechanism (GTSM)", RFC 3682,
+              DOI 10.17487/RFC3682, February 2004,
+              <https://www.rfc-editor.org/rfc/rfc3682>.
 
    [RFC3927]  Cheshire, S., Aboba, B., and E. Guttman, "Dynamic
               Configuration of IPv4 Link-Local Addresses", RFC 3927,
