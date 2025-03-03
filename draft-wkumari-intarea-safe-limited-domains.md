@@ -45,6 +45,7 @@ normative:
   RFC8799:
 informative:
   RFC3031:
+  RFC3682:
   RFC3927:
   RFC4291:
   RFC5771:
@@ -84,7 +85,7 @@ Internet.
 
 These mechanism are not applicable to all protocols intended for use in a
 limited domain, but if implemented on certain classes of protocols, they  can
-significantly reduce the risk of leakage of into the global Internet.
+significantly reduce the risks.
 
 --- middle
 
@@ -139,9 +140,9 @@ consider making the protocol "fail-closed" rather than "fail-open", as
 described below.
 
 This is primarily targeted towards protocols which are intended to primarily be
-used within a single LAN segment, or for protocols which provide a transport
-type service (similar to MPLS or SRv6) and are not intended to remain within a
-single administrative domain..
+used within a single layer-2 broadcast domain, or for protocols which provide a
+transport type service (similar to MPLS or SRv6) and are not intended to remain
+within a single administrative domain.
 
 # Conventions and Definitions
 
@@ -199,18 +200,26 @@ number and complexity. Finally, fail-closed protocols do not require that
 operators of networks outside of the limited domain implement filters to
 protect their networks from the limited domain traffic.
 
-# IP TTL Limiting
+# IP Hop-Limit Limiting
 
 Some limited domain protocols are intended to only be used within a single IP
-subnet. In these cases, it may be possible to use
-IP TTL limiting to ensure that the protocol does not leak out of the subnet.
+subnet. In these cases, it may be possible to use the IP Hop-Limit to ensure
+that the protocol does not leak out of the subnet.
 
-By specifying that the IP TTL of packets carrying the protocol be set to a
-value of 1, it is possible to ensure that the protocol does not leak out of the
-subnet. This is because routers will decrement the TTL of packets by 1 when
-forwarding them, and discard the packet when it reaches zero.
+By specifying that the IP Hop-Limit of packets carrying the protocol be set to
+a value of 1, it is possible to ensure that the protocol does not leak out of
+the subnet. This is because routers will decrement the Hop-Limit of packets by
+1 when forwarding them, and discard the packet when it reaches zero.
 
-# IP Multicast Addressing
+The approach of setting the IP Hop-Limit to 1 ensures that the protocol does
+leave the subnet. This is different from requiring the received IP Hop-Limit
+has a value of 255, as used in {{RFC3682}}, which ensures that traffic cannot
+be spoofed from outside the subnet.
+
+Which option to choose (if either) depends on the specific requirements of the
+protocol.
+
+# IPv4 Multicast Addressing
 
 Some protocols (e.g OSPF) use addresses from the IP Local Network Control
 Block {{RFC5771}}, (224.0.0/24). In addition to providing a discovery
