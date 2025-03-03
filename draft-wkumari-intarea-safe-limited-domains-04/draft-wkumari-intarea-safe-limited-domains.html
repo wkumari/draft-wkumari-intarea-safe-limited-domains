@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>Safe(r) Limited Domains</title>
+<meta content="Warren Kumari" name="author">
+<meta content="Andrew Alston" name="author">
+<meta content="Éric Vyncke" name="author">
+<meta content="Suresh Krishnan" name="author">
+<meta content="Donald Eastlake" name="author">
+<meta content='
+       Documents describing protocols that are only intended to be used within
+"limited domains" often do not clearly define how the boundary of the limited
+domain is implemented and enforced, or require that operators of these limited
+domains perfectly filter at all of the boundary nodes of the domain to
+protect the rest of the global Internet from these protocols and vice-versa. 
+       This document discusses some design principles and offers mechanisms to
+allow protocols that are designed to operate in a limited domain "fail-closed"
+rather than "fail-open", thereby making these protocols safer to deploy on the
+Internet. 
+       These mechanism are not applicable to all protocols intended for use in a
+limited domain, but if implemented on certain classes of protocols, they  can
+significantly reduce the risks. 
+    ' name="description">
+<meta content="xml2rfc 3.28.0" name="generator">
+<meta content="Internet-Draft" name="keyword">
+<meta content="draft-wkumari-intarea-safe-limited-domains-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.28.0
+    Python 3.12.9
+    ConfigArgParse 1.7
+    google-i18n-address 3.1.1
+    intervaltree 3.1.0
+    Jinja2 3.1.5
+    lxml 5.3.0
+    platformdirs 4.3.6
+    pycountry 24.6.1
+    PyYAML 6.0.2
+    requests 2.32.3
+    setuptools 70.3.0
+    wcwidth 0.2.13
+-->
+<link href="draft-wkumari-intarea-safe-limited-domains.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  --font-title: "Sofia Sans Semi Condensed", sans-serif;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+section {
+  clear: both;
+}
+.section-number {
+  padding-right: 0.5em;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 680;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1#title {
+  font-size: 32px;
+  line-height: 40px;
+  clear: both;
+}
+h1#title, h1#rfcnum {
+  margin: 1.5em 0 0.2em;
+}
+h1#rfcnum + h1#title {
+  margin: 0.2em 0;
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+}
+#abstract+p code, #abstract+p samp, #abstract+p tt {
+  font-size: 16px;
+  line-height: 0;
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+/* font-family isn't space-separated, but =~ will have to do */
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  border: none;
+  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+     support flexbox yet.
+  */
+  display: table;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+  & :is(ol, ul) {
+    margin-left: 1em;
+  }
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+  & li {
+    margin-top: 0.5em;
+  }
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  margin: 0 0 0 2em;
+  & li {
+    margin: 0;
+    & :first-child { margin-top: 0; }
+    & :last-child { margin-bottom: 0; }
+  }
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+  &.olPercent {
+    --indent: 5ch;
+    & > dt {
+      min-width: calc(var(--indent) - 2ch);
+    }
+  }
+  &.olPercent > dt {
+    float: none;
+  }
+
+  dl > dd > & {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+}
+dl:not(.dlNewline) > dt {
+  float: left;
+  margin-right: 2ch;
+  min-width: 8ch;
+}
+dl > dd {
+  margin-bottom: .8em;
+  margin-left: var(--indent) !important; /* stupid element overrides */
+  min-height: 2ex;
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+  & > :is(:first-child, .break:first-child + *) {
+    margin-top: 0;
+  }
+  & > :is(:last-child) {
+    margin-bottom: 0;
+  }
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a, a[href].selfRef:hover {
+  text-decoration: none;
+}
+a[href] {
+  color: var(--link-color);
+}
+a[href].selfRef, .iref + a[href].internal {
+  color: var(--text-color);
+}
+a[href]:hover {
+  text-decoration: underline;
+}
+a[href].selfRef:hover {
+  background-color: var(--highlight-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+  caption-side: bottom;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) p {
+    margin: -2px 0;
+    max-height: 0;
+    transition: max-height 2s ease, margin 0.5s ease 0.5s;
+    overflow: hidden;
+  }
+  :is(#status-of-memo, #copyright):hover p,
+  :is(#status-of-memo, #copyright) h2:target ~ p {
+    margin: 0.5em 0;
+    max-height: 500px;
+    overflow: auto;
+  }
+  pre, svg {
+    display: inline-block;
+    /* In the horizontal direction, sometimes people make over-sized figures.
+       Scrollbars for those is therefore necessary: auto adds them as necessary..
+       In the vertical direction, the line-height can combine with the font
+       asender/descender height to produce scrollbars: hidden avoids that. */
+    overflow: auto hidden;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+}
+table.right {
+  margin-left: auto;
+}
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+table.left {
+  margin-right: auto;
+}
+table .text-left {
+  text-align: left;
+}
+table .text-center {
+  text-align: center;
+}
+table .text-right {
+  text-align: right;
+}
+
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+table caption {
+  margin: 0;
+  padding: 3px 0 3px 1em;
+}
+table p {
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+  &[href] {
+    color: var(--pilcrow-weak);
+    &:hover { text-decoration: none; }
+  }
+}
+@media not print {
+  :hover > a.pilcrow {
+    opacity: 1;
+  }
+  a.pilcrow[href]:hover {
+    color: var(--pilcrow-strong);
+    background-color: transparent;
+  }
+}
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+  & dt {
+    width: var(--identifier-width);
+    min-width: var(--identifier-width);
+    clear: left;
+    float: left;
+    text-align: right;
+    margin-right: 1ch;
+  }
+  & dd {
+    margin: 0;
+    margin-left: calc(1em + var(--identifier-width)) !important;
+    min-width: 5em;
+  }
+  & .authors {
+    & .author {
+      display: inline-block;
+      margin-right: 1.5em;
+    }
+    & .org {
+      font-style: italic;
+    }
+  }
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+
+  & nav {
+    & ul {
+      margin: 0 0.5em 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    & li {
+      line-height: 1.3em;
+      margin: 2px 0;
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
+  }
+  & a.xref {
+    white-space: normal;
+  }
+}
+
+.references {
+  & > dt {
+    text-align: right;
+    font-weight: bold;
+    min-width: 10ch;
+    margin-right: 1.5ch;
+    &:target::before {
+      content: "⇒";
+      margin: 0 10px 0 -25px;
+    }
+  }
+  & > dd {
+    margin-left: 12ch !important;
+    overflow: visible;
+    & .refInstance {
+      margin-bottom: 0.8em;
+    }
+    & .ascii {
+      margin-bottom: 0.25em;
+    }
+  }
+}
+
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  max-width: 20em;
+  margin: 1em auto 1em 0;
+
+  & .nameRole {
+    font-weight: 700;
+    margin-left: 0;
+  }
+  & .label {
+    margin: 0.5em 0;
+  }
+  & .type {
+    display: none;
+  }
+  & .alternative-contact {
+    margin: 0.5em 0 0.25em 0;
+  }
+  & .non-ascii {
+    margin: 0 0 0 2em;
+  }
+  & div.left {
+    text-align: left;
+  }
+  & div.right {
+    text-align: right;
+  }
+}
+
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses > section {
+    column-count: 2;
+    column-gap: 20px;
+  }
+  #authors-addresses > section > h2 {
+    column-span: all;
+  }
+  /* hack for break-inside: avoid-column */
+  #authors-addresses address {
+    display: inline-block;
+    break-inside: avoid-column;
+  }
+}
+
+/* Comments */
+.rfcEditorRemove p:first-of-type {
+  font-style: italic;
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+
+@media screen {
+  #toc nav {
+    font-family: var(--font-title);
+    font-weight: 360;
+    & > ul { margin-bottom: 2em; }
+    & ul {
+      margin: 0 0 0 4px;
+      & :is(p, li) {
+        margin: 2px 0;
+      }
+    }
+  }
+  #toc a.toplink {
+    float: right;
+  }
+}
+@media not screen {
+  #toc a.toplink {
+    display: none;
+  }
+}
+
+
+/* TOC layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 1px 0 0 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 2px 0 2px 6px;
+    padding-right: 1em;
+    font-size: 18px;
+    line-height: 24px;
+    min-width: 190px;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+    &::before { /* css hamburger */
+      float: right;
+      position: relative;
+      width: 1em;
+      height: 1px;
+      left: -164px;
+      margin: 8px 0 0 0;
+      background: white none repeat scroll 0 0;
+      box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+      content: "";
+    }
+  }
+  #toc nav {
+    display: none;
+    background-color: var(--background-color);
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+  #toc.active {
+    opacity: 1;
+    & nav { display: block; }
+  }
+  /* Make the collapsed ToC header render white on gray also when it's a link */
+  #toc h2 a,
+  #toc h2 a:is(:link, :focus, :hover),
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+  #toc a.toplink {
+    margin: 2px 0.5em 0;
+  }
+}
+
+/* TOC layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 2em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+  #toc a.toplink {
+    margin: 8px 0.5em 0;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre, .vcard {
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  :is(h2, h3, h4, h5, h6)+*, dd {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg :is([stroke="black"], [stroke^="#000"]) {
+  stroke: var(--text-color);
+}
+svg :is([stroke="white"], [stroke^="#fff"]) {
+  stroke: var(--background-color);
+}
+svg :is([fill="black"], [fill^="#000"], :not([fill])) {
+  fill: var(--text-color);
+}
+svg :is([fill="white"], [fill^="#fff"]) {
+  fill: var(--background-color);
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">safer-limited-domains</td>
+<td class="right">March 2025</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Kumari, et al.</td>
+<td class="center">Expires 4 September 2025</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">Internet Area Working Group</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-wkumari-intarea-safe-limited-domains-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2025-03-03" class="published">3 March 2025</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Standards Track</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2025-09-04">4 September 2025</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">W. Kumari</div>
+<div class="org">Google, LLC</div>
+</div>
+<div class="author">
+      <div class="author-name">A. Alston</div>
+<div class="org">Alston Networks</div>
+</div>
+<div class="author">
+      <div class="author-name">É. Vyncke</div>
+<div class="org">Cisco</div>
+</div>
+<div class="author">
+      <div class="author-name">S. Krishnan</div>
+<div class="org">Cisco</div>
+</div>
+<div class="author">
+      <div class="author-name">D. Eastlake</div>
+<div class="org">Independent</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">Safe(r) Limited Domains</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">Documents describing protocols that are only intended to be used within
+"limited domains" often do not clearly define how the boundary of the limited
+domain is implemented and enforced, or require that operators of these limited
+domains perfectly filter at all of the boundary nodes of the domain to
+protect the rest of the global Internet from these protocols and vice-versa.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-2">This document discusses some design principles and offers mechanisms to
+allow protocols that are designed to operate in a limited domain "fail-closed"
+rather than "fail-open", thereby making these protocols safer to deploy on the
+Internet.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+<p id="section-abstract-3">These mechanism are not applicable to all protocols intended for use in a
+limited domain, but if implemented on certain classes of protocols, they  can
+significantly reduce the risks.<a href="#section-abstract-3" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-discussion-venues">
+<a href="#name-discussion-venues" class="section-name selfRef">Discussion Venues</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">Discussion of this document takes place on the
+    Internet Area Working Group Working Group mailing list (int-area@ietf.org),
+    which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/int-area/">https://mailarchive.ietf.org/arch/browse/int-area/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">Source for this draft and an issue tracker can be found at
+    <span><a href="https://github.com/wkumari/draft-wkumari-intarea-safe-limited-domains">https://github.com/wkumari/draft-wkumari-intarea-safe-limited-domains</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 4 September 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2025 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-some-types-of-limited-domai" class="internal xref">Some types of limited domain protocols</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-fail-open-versus-fail-close" class="internal xref">Fail-open versus Fail-closed</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-ip-hop-limit-limiting" class="internal xref">IP Hop-Limit Limiting</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-ipv4-multicast-addressing" class="internal xref">IPv4 Multicast Addressing</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-ipv6-link-local-addresses" class="internal xref">IPv6 Link Local Addresses</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-making-a-layer-3-type-limit" class="internal xref">Making a layer-3 type limited-domain protocol fail-closed</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-ethernet-protocol-identific" class="internal xref">Ethernet Protocol Identification</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-extended-ethertype-protocol" class="internal xref">Extended EtherType Protocol Identification</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-specific-ethertype-protocol" class="internal xref">Specific EtherType Protocol Identification</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.1">
+                <p id="section-toc.1-1.12.2.1.1"><a href="#section-12.1" class="auto internal xref">12.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.2">
+                <p id="section-toc.1-1.12.2.2.1"><a href="#section-12.2" class="auto internal xref">12.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
+            <p id="section-toc.1-1.14.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-changelog" class="internal xref">Changelog</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
+            <p id="section-toc.1-1.15.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1"><span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span> discusses the concept of "limited domains", provides examples of
+limited domains, as well as Examples of Limited Domain Solutions, including
+Service Function Chaining (SFC <span>[<a href="#RFC7665" class="cite xref">RFC7665</a>]</span> ), Segment Routing, "Creative uses
+of IPv6 features" (including Extension headers, e.g., for in situ Operations,
+Administration, and maintenance <span>[<a href="#RFC9378" class="cite xref">RFC9378</a>]</span>).<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">In order to provide context, this document will quote extensively from
+<span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span>, but it is assumed that the reader will actually read <span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span>
+in its entirety.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3"><span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span> Section 3, notes:<a href="#section-1-3" class="pilcrow">¶</a></p>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-1-4.1">
+          <p id="section-1-4.1.1">A common argument is that if a protocol is intended for limited use, the
+chances are very high that it will in fact be used (or misused) in other
+scenarios including the so-called open Internet. This is undoubtedly true and
+means that limited use is not an excuse for bad design or poor security. In
+fact, a limited use requirement potentially adds complexity to both the
+protocol and its security design, as discussed later.<a href="#section-1-4.1.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-1-5">Notably, in <span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span> Section 2, states:<a href="#section-1-5" class="pilcrow">¶</a></p>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-1-6.1">
+          <p id="section-1-6.1.1">Domain boundaries that are defined administratively (e.g., by address
+filtering rules in routers) are prone to leakage caused by human error,
+especially if the limited domain traffic appears otherwise normal to the
+boundary routers. In this case, the network operator needs to take active
+steps to protect the boundary. This form of leakage is much less likely if
+nodes must be explicitly configured to handle a given limited-domain
+protocol, for example, by installing a specific protocol handler.<a href="#section-1-6.1.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-1-7">In addition, <span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span> Section 6, notes:<a href="#section-1-7" class="pilcrow">¶</a></p>
+<ul class="normal ulEmpty">
+<li class="normal ulEmpty" id="section-1-8.1">
+          <p id="section-1-8.1.1">Today, where limited domains exist, they are essentially created by careful
+configuration of boundary routers and firewalls. If a domain is characterized
+by one or more address prefixes, address assignment to hosts must also be
+carefully managed. This is an error-prone method, and a combination of
+configuration errors and default routing can lead to unwanted traffic
+escaping the domain. Our basic assumption is therefore that it should be
+possible for domains to be created and managed automatically, with minimal
+human configuration. We now discuss requirements for automating domain
+creation and management.<a href="#section-1-8.1.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-1-9">This document discusses some of the mechanisms which protocol designers can
+use to limit the scope of their protocols to a single link. If the protocol is
+intended to be used in across multiple links, but should not be forwarded
+beyond a single administrative domain, then the protocol designer should
+consider making the protocol "fail-closed" rather than "fail-open", as
+described below.<a href="#section-1-9" class="pilcrow">¶</a></p>
+<p id="section-1-10">This is primarily targeted towards protocols which are intended to primarily be
+used within a single layer-2 broadcast domain, or for protocols which provide a
+transport type service (similar to MPLS or SRv6) and are not intended to remain
+within a single administrative domain.<a href="#section-1-10" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="conventions-and-definitions">
+<section id="section-2">
+      <h2 id="name-conventions-and-definitions">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
+      </h2>
+<p id="section-2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="some-types-of-limited-domain-protocols">
+<section id="section-3">
+      <h2 id="name-some-types-of-limited-domai">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-some-types-of-limited-domai" class="section-name selfRef">Some types of limited domain protocols</a>
+      </h2>
+<p id="section-3-1"><span>[<a href="#RFC8799" class="cite xref">RFC8799</a>]</span> Section 3 discusses some examples of Limited Domains, based mainly
+on the network type (e.g. Home, Sensor Networks, Data Centers, etc).<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">This section instead classifies the types of limited domain protocols based
+more on their intended use, and technology.<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-3">Broadly speaking, there are two types of limited domain protocols:<a href="#section-3-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3-4.1">
+          <p id="section-3-4.1.1">Layer-2 type limited domain protocols: These are protocols that are
+intended to be used within a single LAN segment.<a href="#section-3-4.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-3-4.2">
+          <p id="section-3-4.2.1">Transport type service (for example MPLS and SRv6): These protocols are
+intended to provide a transport service, and are intended to remain
+within a single administrative domain such as a Enterprise or a Service
+Provider network.<a href="#section-3-4.2.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+</section>
+</div>
+<div id="fail-open-versus-fail-closed">
+<section id="section-4">
+      <h2 id="name-fail-open-versus-fail-close">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-fail-open-versus-fail-close" class="section-name selfRef">Fail-open versus Fail-closed</a>
+      </h2>
+<p id="section-4-1">Protocols can be broadly classified as either "fail-open" or "fail-closed".
+Fail-closed protocols are those that require explicit interface or device-wide
+configuration to enable them to be accepted or processed when received on an
+interface.  A classic example of a fail-closed protocol is MPLS (<span>[<a href="#RFC3031" class="cite xref">RFC3031</a>]</span>):
+In order to allow MPLS to transit an interface, the operator must enable the
+MPLS protocol on that interface and on the device itself.  This ensures that
+outside MPLS traffic does not leak in.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2">Fail-open protocols are those that require explicit configuration in order to
+ensure that they do not leak out of a domain, for example, through the
+application of filters.  An example of a fail-open protocol is SRv6 - in order
+to ensure that SRv6 traffic does not leak out of a network, the operator must
+explicitly filter this traffic, and, in order to ensure that SRv6 traffic does
+not leak in, the operator must explicitly filter SRv6 traffic.<a href="#section-4-2" class="pilcrow">¶</a></p>
+<p id="section-4-3">Fail-open protocols are inherently riskier than fail-closed protocols, as they
+rely on perfect configuration of filters on all interfaces at the boundary of a
+domain, and, if the filters are removed for any reason (for example, during
+troubleshooting), there is a risk of inbound or outbound leaks.  In addition,
+some devices or interfaces may have limitations in the size and complexity of
+filters that can be applied, and so adding new filter entries to limit leaks of
+a new protocol may not be possible.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-4-4">Fail-closed protocols, on the other hand, do not require any explicit
+filtering.  In order for the protocol to be accepted and processed when
+received on an interface, the operator must explicitly enable the protocol on
+that interface and on the device itself.  In addition, there is less risk of
+operational mistakes, as it does not rely on filters that may be limited in
+number and complexity. Finally, fail-closed protocols do not require that
+operators of networks outside of the limited domain implement filters to
+protect their networks from the limited domain traffic.<a href="#section-4-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ip-hop-limit-limiting">
+<section id="section-5">
+      <h2 id="name-ip-hop-limit-limiting">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-ip-hop-limit-limiting" class="section-name selfRef">IP Hop-Limit Limiting</a>
+      </h2>
+<p id="section-5-1">Some limited domain protocols are intended to only be used within a single IP
+subnet. In these cases, it may be possible to use the IP Hop-Limit to ensure
+that the protocol does not leak out of the subnet.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">By specifying that the IP Hop-Limit of packets carrying the protocol be set to
+a value of 1, it is possible to ensure that the protocol does not leak out of
+the subnet. This is because routers will decrement the Hop-Limit of packets by
+1 when forwarding them, and discard the packet when it reaches zero.<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-3">The approach of setting the IP Hop-Limit to 1 ensures that the protocol does
+leave the subnet. This is different from requiring the received IP Hop-Limit
+has a value of 255, as used in <span>[<a href="#RFC3682" class="cite xref">RFC3682</a>]</span>, which ensures that traffic cannot
+be spoofed from outside the subnet.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-5-4">Which option to choose (if either) depends on the specific requirements of the
+protocol.<a href="#section-5-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ipv4-multicast-addressing">
+<section id="section-6">
+      <h2 id="name-ipv4-multicast-addressing">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-ipv4-multicast-addressing" class="section-name selfRef">IPv4 Multicast Addressing</a>
+      </h2>
+<p id="section-6-1">Some protocols (e.g OSPF) use addresses from the IP Local Network Control
+Block <span>[<a href="#RFC5771" class="cite xref">RFC5771</a>]</span>, (224.0.0/24). In addition to providing a discovery
+mechanism, this traffic is not forwarded off-link, providing a simple and
+effective way to limit the scope of the protocol.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-2">In some (rare) cases, IPv4 "Link Local" addresses (<span>[<a href="#RFC3927" class="cite xref">RFC3927</a>]</span> may be an
+appropriate mechanism to limit the scope of the protocol, but this
+such a niche case that it is not discussed further here.<a href="#section-6-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ipv6-link-local-addresses">
+<section id="section-7">
+      <h2 id="name-ipv6-link-local-addresses">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-ipv6-link-local-addresses" class="section-name selfRef">IPv6 Link Local Addresses</a>
+      </h2>
+<p id="section-7-1">Link-Local IPv6 Unicast Addresses (<span>[<a href="#RFC4291" class="cite xref">RFC4291</a>]</span> Section 2.5.6) are used for
+communication between nodes on a single link. They are not routable and are not
+forwarded by routers. In cases where a limited-domain protocol is intended to
+be used only within a single link, the use of IPv6 Link-Local addresses can be
+an effective way to limit the scope of the protocol.<a href="#section-7-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="making-a-layer-3-type-limited-domain-protocol-fail-closed">
+<section id="section-8">
+      <h2 id="name-making-a-layer-3-type-limit">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-making-a-layer-3-type-limit" class="section-name selfRef">Making a layer-3 type limited-domain protocol fail-closed</a>
+      </h2>
+<p id="section-8-1">One way to make a limited-domain protocol fail-closed is to assign it a unique
+layer-2 protocol identifier, usually an EtherType. This mechanism is used by
+MPLS.  In modern router and hosts, if such a protocol identifier is not enabled
+on an interface, then the Ethernet chip-set will ignore the frame, and the node
+will not see or process it. Thus, it is necessary to specifically enable the
+layer-2 protocol identifier on all relevant interfaces inside the limited
+domain, and the protocol will be blocked at the domain boundary where the
+protocol has not been so enabled. This is a simple and effective mechanism to
+ensure that the protocol does not leak out of the limited domain if and when an
+operator makes a mistake in configuring filters based on identifiers appearing
+deeper in the frame such as IP addresses or IP protocol or header options.<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-2">This layer-2 protocol identifier technique only works for transport-type
+limited domain protocols (i.e., protocols running at layer 3).  Higher layer
+protocols cannot necessarily be protected in this way, and so cryptographically
+enforced mechanisms may need to be used instead (e.g., as done used by ANIMA in
+<span>[<a href="#RFC8994" class="cite xref">RFC8994</a>]</span> and <span>[<a href="#RFC8995" class="cite xref">RFC8995</a>]</span>).<a href="#section-8-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ethernet-protocol-identification">
+<section id="section-9">
+      <h2 id="name-ethernet-protocol-identific">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-ethernet-protocol-identific" class="section-name selfRef">Ethernet Protocol Identification</a>
+      </h2>
+<p id="section-9-1">Figure 1 shows the general format of Ethernet frames. The relevant protocol
+identification field occurs after the destination and source MAC addresses and
+any tags (such a VLAN tags). The alternatives for protocol identification are
+discussed in Section 3 of <span>[<a href="#RFC9542" class="cite xref">RFC9542</a>]</span>.<a href="#section-9-1" class="pilcrow">¶</a></p>
+<span id="name-ethernet-frame-format"></span><div id="fig1">
+<figure id="figure-1">
+        <div class="alignLeft art-text artwork" id="section-9-2.1">
+<pre>
++-----------+-----------+- - - - +----------+--------- - - -+-------+
+|Destination|  Source   |Optional| Protocol |  Body of      |Trailer|
+|MAC Address|MAC Address|  Tags  |Identifier|   Frame        |       |
++-----------+-----------+ - - - -+----------+--------- - - -+-------|
+</pre>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-ethernet-frame-format" class="selfRef">Ethernet Frame Format</a>
+        </figcaption></figure>
+</div>
+<p id="section-9-3">This document considers EtherType protocol identification. An EtherType is an
+unsigned 16-bit field in an Ethernet frame with a value in the range of 0x0600
+to 0xFFFF, and so it is a somewhat limited resource; however, there exists a
+special Extended EtherType (0x88B7) that can be suffixed by an Organizationally
+Unique Identifier (OUI) followed by a further 16-bits identifying the protocol
+relative to that OUI as discussed in Section 3 of <span>[<a href="#RFC9542" class="cite xref">RFC9542</a>]</span>. These alternatives
+of a direct EtherType or use of the Extended EtherType for the case of the IANA
+OUI are illustrated in Figure 2. The following subsections discuss the factors
+which may influence the choice between these alternatives when use of such
+layer 2 protocol identification, to make the isolation of a limited domain more
+robust, is warranted.<a href="#section-9-3" class="pilcrow">¶</a></p>
+<span id="name-ethertype-based-protocol-id"></span><div id="fig2">
+<figure id="figure-2">
+        <div class="alignLeft art-text artwork" id="section-9-4.1">
+<pre>
+  01234567 01234567
++--------+--------+
+|    EtherType    |
++--------+--------+
+Specific EtherType
+
+  01234567 01234567 01234567 01234567 01234567 01234567 01234567
++--------+--------+--------+--------+--------+--------+--------+
+|  0x88  |  0xB7  |  0x00  |  0x00  |  0x5E  | Protocol Number |
++--------+--------+--------+--------+--------+--------+--------+
+Extended EtherType|         IANA OUI         |IANA Protocol Number
+</pre>
+</div>
+<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
+<a href="#name-ethertype-based-protocol-id" class="selfRef">EtherType Based Protocol Identification</a>
+        </figcaption></figure>
+</div>
+<p id="section-9-5">Because specific EtherTypes are a limited resource, an Extended EtherType
+<span class="bcp14">SHOULD</span> be used unless there is a strong reason why it will not work
+satisfactorily and a specific EtherType is required.<a href="#section-9-5" class="pilcrow">¶</a></p>
+<div id="extended-ethertype-protocol-identification">
+<section id="section-9.1">
+        <h3 id="name-extended-ethertype-protocol">
+<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-extended-ethertype-protocol" class="section-name selfRef">Extended EtherType Protocol Identification</a>
+        </h3>
+<p id="section-9.1-1">The main advantage of using an Extended EtherType with an IANA Protocol Number,
+as shown in Figure 2, is that such a number can be allocated by IANA with
+Expert Review based on an Internet Draft and is thus relatively easy to obtain.
+The main disadvantage is that the protocol identification is 5 bytes longer
+than a specific dedicated EtherType.<a href="#section-9.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="specific-ethertype-protocol-identification">
+<section id="section-9.2">
+        <h3 id="name-specific-ethertype-protocol">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-specific-ethertype-protocol" class="section-name selfRef">Specific EtherType Protocol Identification</a>
+        </h3>
+<p id="section-9.2-1">The primary disadvantage of using a specific EtherType, as opposed to an
+Extended EtherType, is that assignment of such an EtherType is significantly
+more difficult than assignment of an Extended EtherType IANA protocol number.
+As discussed in <span>[<a href="#RFC9542" class="cite xref">RFC9542</a>]</span>, a specific EtherType can only be assigned by the
+IEEE Registration Authority under the following policy: "Since EtherTypes are a
+fairly scarce resource, the IEEE RAC has let us know that they will not assign
+a new EtherType to a new IETF protocol specification until the IESG has
+approved the protocol specification for publication as an RFC.  In exceptional
+cases, the IEEE RA is willing to consider "early allocation" of an EtherType
+for an IETF protocol that is still under development as long as the request
+comes from and has been vetted by the IESG." (<span>[<a href="#RFC9542" class="cite xref">RFC9542</a>]</span> Appendix B.1, citing
+<span>[<a href="#IESG_EtherType" class="cite xref">IESG_EtherType</a>]</span>)<a href="#section-9.2-1" class="pilcrow">¶</a></p>
+<p id="section-9.2-2">During development and testing, a protocol can use a "Local Experimental
+Ethertype" (0x88b5 and 0x88b6 - <span>[<a href="#IANA_EtherType" class="cite xref">IANA_EtherType</a>]</span>).  Once the protocol is
+approved for publication, the IESG can request an EtherType from the IEEE.
+However, there is always a risk of some implementation using a Local
+Experimental EtherType not getting updated causing conflicts with a later
+different use of that experimental EtherType.<a href="#section-9.2-2" class="pilcrow">¶</a></p>
+<p id="section-9.2-3">The primary advantage of using a specific EtherType is the saving of 5 bytes
+relative to the use of the Extended EtherType with a protocol number under the
+IANA OUI.<a href="#section-9.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-10">
+      <h2 id="name-security-considerations">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-10-1">Protocols are designated as "limited domain" because something unexpected might
+happen if they leak outside of a domain with unified management. For example,
+VLAN or VPN or overlay identifiers may be misinterpreted resulting in the
+delivery of data to or the acceptance of data from unauthorized network nodes
+violating intended security constraints. The use of a layer-2 protocol
+identifier to provide a "fail closed" barrier at the domain border can
+significantly improve security by eliminating the opportunity for such
+misinterpretation.<a href="#section-10-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-11">
+      <h2 id="name-iana-considerations">
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-11-1">This document has no IANA actions.<a href="#section-11-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-combined-references">
+<section id="section-12">
+      <h2 id="name-references">
+<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="sec-normative-references">
+<section id="section-12.1">
+        <h3 id="name-normative-references">
+<a href="#section-12.1" class="section-number selfRef">12.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+        <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8799">[RFC8799]</dt>
+      <dd>
+<span class="refAuthor">Carpenter, B.</span> and <span class="refAuthor">B. Liu</span>, <span class="refTitle">"Limited Domains and Internet Protocols"</span>, <span class="seriesInfo">RFC 8799</span>, <span class="seriesInfo">DOI 10.17487/RFC8799</span>, <time datetime="2020-07" class="refDate">July 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8799">https://www.rfc-editor.org/rfc/rfc8799</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-12.2">
+        <h3 id="name-informative-references">
+<a href="#section-12.2" class="section-number selfRef">12.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="IANA_EtherType">[IANA_EtherType]</dt>
+        <dd>
+<span class="refTitle">"IANA EtherType Registry"</span>, <span class="seriesInfo">Web &lt;https://www.iana.org/assignments/ieee-802-numbers/ieee-802-numbers.xhtml#ieee-802-numbers-1&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="IESG_EtherType">[IESG_EtherType]</dt>
+        <dd>
+<span class="refTitle">"IESG Statement on EtherTypes"</span>, <span class="seriesInfo">Web &lt;https://www.ietf.org/about/groups/iesg/statements/ethertypes&gt;</span>, <time datetime="2023-05-01" class="refDate">1 May 2023</time>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3031">[RFC3031]</dt>
+        <dd>
+<span class="refAuthor">Rosen, E.</span>, <span class="refAuthor">Viswanathan, A.</span>, and <span class="refAuthor">R. Callon</span>, <span class="refTitle">"Multiprotocol Label Switching Architecture"</span>, <span class="seriesInfo">RFC 3031</span>, <span class="seriesInfo">DOI 10.17487/RFC3031</span>, <time datetime="2001-01" class="refDate">January 2001</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3031">https://www.rfc-editor.org/rfc/rfc3031</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3682">[RFC3682]</dt>
+        <dd>
+<span class="refAuthor">Gill, V.</span>, <span class="refAuthor">Heasley, J.</span>, and <span class="refAuthor">D. Meyer</span>, <span class="refTitle">"The Generalized TTL Security Mechanism (GTSM)"</span>, <span class="seriesInfo">RFC 3682</span>, <span class="seriesInfo">DOI 10.17487/RFC3682</span>, <time datetime="2004-02" class="refDate">February 2004</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3682">https://www.rfc-editor.org/rfc/rfc3682</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3927">[RFC3927]</dt>
+        <dd>
+<span class="refAuthor">Cheshire, S.</span>, <span class="refAuthor">Aboba, B.</span>, and <span class="refAuthor">E. Guttman</span>, <span class="refTitle">"Dynamic Configuration of IPv4 Link-Local Addresses"</span>, <span class="seriesInfo">RFC 3927</span>, <span class="seriesInfo">DOI 10.17487/RFC3927</span>, <time datetime="2005-05" class="refDate">May 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3927">https://www.rfc-editor.org/rfc/rfc3927</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC4291">[RFC4291]</dt>
+        <dd>
+<span class="refAuthor">Hinden, R.</span> and <span class="refAuthor">S. Deering</span>, <span class="refTitle">"IP Version 6 Addressing Architecture"</span>, <span class="seriesInfo">RFC 4291</span>, <span class="seriesInfo">DOI 10.17487/RFC4291</span>, <time datetime="2006-02" class="refDate">February 2006</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4291">https://www.rfc-editor.org/rfc/rfc4291</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5771">[RFC5771]</dt>
+        <dd>
+<span class="refAuthor">Cotton, M.</span>, <span class="refAuthor">Vegoda, L.</span>, and <span class="refAuthor">D. Meyer</span>, <span class="refTitle">"IANA Guidelines for IPv4 Multicast Address Assignments"</span>, <span class="seriesInfo">BCP 51</span>, <span class="seriesInfo">RFC 5771</span>, <span class="seriesInfo">DOI 10.17487/RFC5771</span>, <time datetime="2010-03" class="refDate">March 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5771">https://www.rfc-editor.org/rfc/rfc5771</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7665">[RFC7665]</dt>
+        <dd>
+<span class="refAuthor">Halpern, J., Ed.</span> and <span class="refAuthor">C. Pignataro, Ed.</span>, <span class="refTitle">"Service Function Chaining (SFC) Architecture"</span>, <span class="seriesInfo">RFC 7665</span>, <span class="seriesInfo">DOI 10.17487/RFC7665</span>, <time datetime="2015-10" class="refDate">October 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7665">https://www.rfc-editor.org/rfc/rfc7665</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8994">[RFC8994]</dt>
+        <dd>
+<span class="refAuthor">Eckert, T., Ed.</span>, <span class="refAuthor">Behringer, M., Ed.</span>, and <span class="refAuthor">S. Bjarnason</span>, <span class="refTitle">"An Autonomic Control Plane (ACP)"</span>, <span class="seriesInfo">RFC 8994</span>, <span class="seriesInfo">DOI 10.17487/RFC8994</span>, <time datetime="2021-05" class="refDate">May 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8994">https://www.rfc-editor.org/rfc/rfc8994</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8995">[RFC8995]</dt>
+        <dd>
+<span class="refAuthor">Pritikin, M.</span>, <span class="refAuthor">Richardson, M.</span>, <span class="refAuthor">Eckert, T.</span>, <span class="refAuthor">Behringer, M.</span>, and <span class="refAuthor">K. Watsen</span>, <span class="refTitle">"Bootstrapping Remote Secure Key Infrastructure (BRSKI)"</span>, <span class="seriesInfo">RFC 8995</span>, <span class="seriesInfo">DOI 10.17487/RFC8995</span>, <time datetime="2021-05" class="refDate">May 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8995">https://www.rfc-editor.org/rfc/rfc8995</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9378">[RFC9378]</dt>
+        <dd>
+<span class="refAuthor">Brockners, F., Ed.</span>, <span class="refAuthor">Bhandari, S., Ed.</span>, <span class="refAuthor">Bernier, D.</span>, and <span class="refAuthor">T. Mizrahi, Ed.</span>, <span class="refTitle">"In Situ Operations, Administration, and Maintenance (IOAM) Deployment"</span>, <span class="seriesInfo">RFC 9378</span>, <span class="seriesInfo">DOI 10.17487/RFC9378</span>, <time datetime="2023-04" class="refDate">April 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9378">https://www.rfc-editor.org/rfc/rfc9378</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9542">[RFC9542]</dt>
+      <dd>
+<span class="refAuthor">Eastlake 3rd, D.</span>, <span class="refAuthor">Abley, J.</span>, and <span class="refAuthor">Y. Li</span>, <span class="refTitle">"IANA Considerations and IETF Protocol and Documentation Usage for IEEE 802 Parameters"</span>, <span class="seriesInfo">BCP 141</span>, <span class="seriesInfo">RFC 9542</span>, <span class="seriesInfo">DOI 10.17487/RFC9542</span>, <time datetime="2024-04" class="refDate">April 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9542">https://www.rfc-editor.org/rfc/rfc9542</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="acknowledgments">
+<section id="appendix-A">
+      <h2 id="name-acknowledgments">
+<a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="appendix-A-1">Much thanks to Deborah Brungard and Brian Carpenter, for their review and
+comments.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-2">Also much thanks to everyone else with whom we have discussed this topic; I've
+had numerous discussions with many many people on this, and I'm sure that I've
+forgotten some of them. Apologies if you were one of them.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="changelog">
+<section id="appendix-B">
+      <h2 id="name-changelog">
+<a href="#name-changelog" class="section-name selfRef">Changelog</a>
+      </h2>
+<ul class="normal">
+<li class="normal" id="appendix-B-1.1">
+          <p id="appendix-B-1.1.1">01-02:<a href="#appendix-B-1.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-B-1.1.2.1">
+              <p id="appendix-B-1.1.2.1.1">Add Donald Eastlake as an author.<a href="#appendix-B-1.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="appendix-B-1.1.2.2">
+              <p id="appendix-B-1.1.2.2.1">Substantial re-write and expansion of material concerning specific and
+Extended EtherType protocol identification.<a href="#appendix-B-1.1.2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="appendix-B-1.1.2.3">
+              <p id="appendix-B-1.1.2.3.1">Add initial Security Considerations text.<a href="#appendix-B-1.1.2.3.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</li>
+        <li class="normal" id="appendix-B-1.2">
+          <p id="appendix-B-1.2.1">00-01:<a href="#appendix-B-1.2.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-B-1.2.2.1">
+              <p id="appendix-B-1.2.2.1.1">Deborah pointed out that "this only works for transport-type limited domain
+protocols (e.g., SRv6)" could be read as SRv6 fails-closed.<a href="#appendix-B-1.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</li>
+      </ul>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-C">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Warren Kumari</span></div>
+<div dir="auto" class="left"><span class="org">Google, LLC</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:warren@kumari.net" class="email">warren@kumari.net</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Andrew Alston</span></div>
+<div dir="auto" class="left"><span class="org">Alston Networks</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:alston.networks@gmail.com" class="email">alston.networks@gmail.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Éric Vyncke</span></div>
+<div dir="auto" class="left"><span class="org">Cisco</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:evyncke@cisco.com" class="email">evyncke@cisco.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Suresh Krishnan</span></div>
+<div dir="auto" class="left"><span class="org">Cisco</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:suresh.krishnan@gmail.com" class="email">suresh.krishnan@gmail.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Donald Eastlake</span></div>
+<div dir="auto" class="left"><span class="org">Independent</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:d3e3e3@gmail.com" class="email">d3e3e3@gmail.com</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
