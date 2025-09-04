@@ -1,3 +1,5 @@
+<!-- regenerate: on (set to off if you edit this file) -->
+
 # Safe(r) Limited Domains
 
 This is the working area for the individual Internet-Draft, "Safe(r) Limited Domains".
@@ -13,9 +15,8 @@ This is the working area for the individual Internet-Draft, "Safe(r) Limited Dom
 See the
 [guidelines for contributions](https://github.com/wkumari/draft-wkumari-intarea-safe-limited-domains/blob/main/CONTRIBUTING.md).
 
-Contributions can be made by creating pull requests.
-The GitHub interface supports creating pull requests using the Edit (✏) button.
-
+The contributing file also has tips on how to make contributions, if you
+don't already know how to do that.
 
 ## Command Line Usage
 
