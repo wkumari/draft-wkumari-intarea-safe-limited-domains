@@ -174,7 +174,7 @@ configuration to enable them to be accepted or processed when received on an
 interface.  A classic example of a fail-closed protocol is MPLS ({{RFC3031}}):
 In order to allow MPLS to transit an interface, the operator must enable the
 MPLS protocol on that interface and on the device itself.  This ensures that
-outside MPLS traffic does not leak in.
+outside MPLS traffic does not leak in or out of the network / domain.
 
 Fail-open protocols are those that require explicit configuration in order to
 ensure that they do not leak out of a domain, for example, through the
