@@ -366,6 +366,9 @@ forgotten some of them. Apologies if you were one of them.
 
 # Changelog
 {:numbered="false"}
+* -01-03:
+  * Add Security Considerations text about the risks of fail-open protocols and
+    the benefits of fail-closed protocols.
 
 * 01-02:
   * Add Donald Eastlake as an author.
