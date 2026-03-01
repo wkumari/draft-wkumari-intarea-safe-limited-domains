@@ -5,13 +5,13 @@
 Internet Area Working Group                                    W. Kumari
 Internet-Draft                                               Google, LLC
 Intended status: Standards Track                               A. Alston
-Expires: 8 March 2026                                    Alston Networks
+Expires: 2 September 2026                                Alston Networks
                                                                É. Vyncke
                                                              S. Krishnan
                                                                    Cisco
                                                              D. Eastlake
                                                              Independent
-                                                        4 September 2025
+                                                            1 March 2026
 
 
                         Safe(r) Limited Domains
@@ -62,11 +62,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 March 2026.
+   This Internet-Draft will expire on 2 September 2026.
 
 Copyright Notice
 
-   Copyright (c) 2025 IETF Trust and the persons identified as the
+   Copyright (c) 2026 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -478,6 +478,11 @@ Acknowledgments
    one of them.
 
 Changelog
+
+   *  -01-03:
+
+      -  Add Security Considerations text about the risks of fail-open
+         protocols and the benefits of fail-closed protocols.
 
    *  01-02:
 
