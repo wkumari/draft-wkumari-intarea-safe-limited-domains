@@ -36,7 +36,7 @@ Abstract
 
    These mechanisms are not applicable to all protocols intended for use
    in a limited domain, but if implemented on certain classes of
-   protocols, they can significantly reduce the risks.
+   protocols, can significantly reduce the risks.
 
 Discussion Venues
 
