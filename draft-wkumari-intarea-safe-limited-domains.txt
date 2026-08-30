@@ -93,6 +93,7 @@ Table of Contents
    8.  Making a layer-3 type limited-domain protocol fail-closed
    9.  Ethernet Protocol Identification
      9.1.  Extended EtherType Protocol Identification
+       9.1.1.  Hardware Forwarding Considerations
      9.2.  Specific EtherType Protocol Identification
    10. Security Considerations
    11. IANA Considerations
@@ -230,21 +231,19 @@ Table of Contents
 
 5.  IP Hop-Limit Limiting
 
-   Some limited domain protocols are intended to only be used within a
-   single IP subnet.  In these cases, it may be possible to use the IP
-   Hop-Limit to ensure that the protocol does not leak out of the
-   subnet.
+   -=-=-=- # IP Hop-Limit Limiting
 
-   By specifying that the IP Hop-Limit of packets carrying the protocol
-   be set to a value of 1, it is possible to ensure that the protocol
-   does not leak out of the subnet.  This is because routers will
-   decrement the Hop-Limit of packets by 1 when forwarding them, and
-   discard the packet when it reaches zero.
+   Some limited-domain protocols are intended to operate strictly within
+   a single IP subnet or link.  In these cases, protocol specifications
+   SHOULD require that the IP Hop-Limit (or IPv4 TTL) to be set to 1
+   upon transmission.
 
-   The approach of setting the IP Hop-Limit to 1 ensures that the
-   protocol does not leave the subnet.  This is different from requiring
-   the received IP Hop-Limit has a value of 255, as used in [RFC3682],
-   which ensures that traffic cannot be spoofed from outside the subnet.
+   As standard routers decrement the Hop-Limit upon forwarding and
+   discard packets when the count reaches zero, setting the Hop-Limit to
+   1 ensures that the traffic cannot be forwarded off-link.  This
+   differs from the Generalized TTL Security Mechanism (GTSM,
+   [RFC3682]), which sets the Hop-Limit to 255 to verify that the sender
+   is on-link and protect against off-link spoofing.
 
    Which option to choose (if either) depends on the specific
    requirements of the protocol.
@@ -346,6 +345,35 @@ Table of Contents
    is thus relatively easy to obtain.  The main disadvantage is that the
    protocol identification is 5 bytes longer than a specific dedicated
    EtherType.
+
+9.1.1.  Hardware Forwarding Considerations
+
+   While Extended EtherTypes ([RFC9542]) solve the namespace exhaustion
+   issue for 16-bit EtherTypes, protocol designers must remain mindful
+   of hardware parsing pipeline constraints.
+
+   High-throughput "merchant silicon" and network processor ASICs are
+   heavily optimized to parse standard 16-bit Layer-2 EtherTypes at line
+   rate within a fixed-depth initial parsing window.  In contrast,
+   variable-length or extended EtherType encapsulations (e.g., SNAP
+   headers or 8-octet Extended EtherTypes) can introduce forwarding
+   trade-offs on certain switching silicon:
+
+   *  *Parser Depth and Recirculation*: Some existing hardware engines
+      cannot parse beyond a fixed offset in a single pass.  Having an
+      Extended EtherType before inner headers may trigger packet
+      recirculation or force packets into a slower software/microcode
+      exception path.
+
+   *  *TCAM and Flow Matching*: Many Access Control Lists (ACLs) and
+      flow-match engines have native primitives for matching 16-bit
+      EtherTypes (e.g., IPv4, IPv6, MPLS), whereas matching on an OUI
+      plus extended protocol ID may consume multiple TCAM lookups, or
+      exceed key-generation capabilities.
+
+   Protocol designers should therefore balance the scarcity of standard
+   16-bit EtherTypes against the line-rate hardware parsing requirements
+   of high-speed transit nodes.
 
 9.2.  Specific EtherType Protocol Identification
 
