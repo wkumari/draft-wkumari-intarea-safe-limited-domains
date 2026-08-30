@@ -95,13 +95,19 @@ Table of Contents
      9.1.  Extended EtherType Protocol Identification
        9.1.1.  Hardware Forwarding Considerations
      9.2.  Specific EtherType Protocol Identification
-   10. Security Considerations
-   11. IANA Considerations
-   12. References
-     12.1.  Normative References
-     12.2.  Informative References
+   10. Non-Ethernet Encapsulations and Layer-3 Overlays
+     10.1.  The Fragility of IP-Level Filtering in Overlays
+   11. Security Considerations
+   12. IANA Considerations
+   13. References
+     13.1.  Normative References
+     13.2.  Informative References
    Acknowledgments
    Changelog
+   Appendix A: Structural vs. Policy-Enforced Boundaries (MPLS vs.
+           SRv6)
+     MPLS: Structural Fail-Closed Isolation
+     SRv6: Policy-Enforced Fail-Open Exposure
    Authors' Addresses
 
 1.  Introduction
@@ -403,7 +409,35 @@ Table of Contents
    5 bytes relative to the use of the Extended EtherType with a protocol
    number under the IANA OUI.
 
-10.  Security Considerations
+10.  Non-Ethernet Encapsulations and Layer-3 Overlays
+
+   Many modern data centers, enterprise networks, and WANs deploy
+   limited-domain features across routed multi-hop IP underlays using
+   Layer-3 encapsulations (such as Geneve [RFC8926], VXLAN-GPE
+   [RFC9674], GRE [RFC2784], or generic UDP encapsulation [RFC8085]).
+
+   When designing limited-domain protocols for Layer-3 overlay
+   environments, the same fundamental tension between fail-open and
+   fail-closed designs applies:
+
+10.1.  The Fragility of IP-Level Filtering in Overlays
+
+   Tunneling limited-domain traffic inside standard unicast IP/UDP
+   packets without domain-specific transport identifiers exposes the
+   traffic to the same leakage risks as native IP:
+
+   1.  *Routability by Default*: If an inner packet is encapsulated in a
+       standard UDP/IP header destined for an IP address that leaks into
+       the global routing table, intermediate underlay routers will
+       forward the encapsulated frame across domain boundaries unless
+       explicitly filtered.
+
+   2.  *Transit Inspection Invisibility*: Intermediate nodes that
+       inspect only the outer IP/UDP headers cannot distinguish between
+       legitimate transit traffic and sensitive limited-domain control
+       payloads.
+
+11.  Security Considerations
 
    Protocols are designated as "limited domain" because something
    unexpected might happen if they leak outside of a domain with unified
@@ -414,13 +448,13 @@ Table of Contents
    "fail closed" barrier at the domain border can significantly improve
    security by eliminating the opportunity for such misinterpretation.
 
-11.  IANA Considerations
+12.  IANA Considerations
 
    This document has no IANA actions.
 
-12.  References
+13.  References
 
-12.1.  Normative References
+13.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -435,7 +469,7 @@ Table of Contents
               Protocols", RFC 8799, DOI 10.17487/RFC8799, July 2020,
               <https://www.rfc-editor.org/rfc/rfc8799>.
 
-12.2.  Informative References
+13.2.  Informative References
 
    [IANA_EtherType]
               "IANA EtherType Registry", Web 
@@ -446,6 +480,11 @@ Table of Contents
               "IESG Statement on EtherTypes", Web
               <https://www.ietf.org/about/groups/iesg/statements/
               ethertypes>, 1 May 2023.
+
+   [RFC2784]  Farinacci, D., Li, T., Hanks, S., Meyer, D., and P.
+              Traina, "Generic Routing Encapsulation (GRE)", RFC 2784,
+              DOI 10.17487/RFC2784, March 2000,
+              <https://www.rfc-editor.org/rfc/rfc2784>.
 
    [RFC3031]  Rosen, E., Viswanathan, A., and R. Callon, "Multiprotocol
               Label Switching Architecture", RFC 3031,
@@ -476,6 +515,20 @@ Table of Contents
               DOI 10.17487/RFC7665, October 2015,
               <https://www.rfc-editor.org/rfc/rfc7665>.
 
+   [RFC8085]  Eggert, L., Fairhurst, G., and G. Shepherd, "UDP Usage
+              Guidelines", BCP 145, RFC 8085, DOI 10.17487/RFC8085,
+              March 2017, <https://www.rfc-editor.org/rfc/rfc8085>.
+
+   [RFC8754]  Filsfils, C., Ed., Dukes, D., Ed., Previdi, S., Leddy, J.,
+              Matsushima, S., and D. Voyer, "IPv6 Segment Routing Header
+              (SRH)", RFC 8754, DOI 10.17487/RFC8754, March 2020,
+              <https://www.rfc-editor.org/rfc/rfc8754>.
+
+   [RFC8926]  Gross, J., Ed., Ganga, I., Ed., and T. Sridhar, Ed.,
+              "Geneve: Generic Network Virtualization Encapsulation",
+              RFC 8926, DOI 10.17487/RFC8926, November 2020,
+              <https://www.rfc-editor.org/rfc/rfc8926>.
+
    [RFC8994]  Eckert, T., Ed., Behringer, M., Ed., and S. Bjarnason, "An
               Autonomic Control Plane (ACP)", RFC 8994,
               DOI 10.17487/RFC8994, May 2021,
@@ -497,6 +550,10 @@ Table of Contents
               for IEEE 802 Parameters", BCP 141, RFC 9542,
               DOI 10.17487/RFC9542, April 2024,
               <https://www.rfc-editor.org/rfc/rfc9542>.
+
+   [RFC9674]  Snijders, J., "Same-Origin Policy for the RPKI Repository
+              Delta Protocol (RRDP)", RFC 9674, DOI 10.17487/RFC9674,
+              December 2024, <https://www.rfc-editor.org/rfc/rfc9674>.
 
 Acknowledgments
 
@@ -529,6 +586,59 @@ Changelog
       -  Deborah pointed out that "this only works for transport-type
          limited domain protocols (e.g., SRv6)" could be read as SRv6
          fails-closed.
+
+Appendix A: Structural vs. Policy-Enforced Boundaries (MPLS vs. SRv6)
+
+   To illustrate the difference between fail-open and fail-closed
+   designs, consider MPLS and Segment Routing over IPv6 (SRv6,
+   [RFC8754]).
+
+MPLS: Structural Fail-Closed Isolation
+
+   MPLS provides an automatic fail-closed boundary by virtue of its
+   Layer-2 encapsulation:
+
+   *  *Distinct Protocol Identifier*: MPLS frames utilize dedicated
+      EtherTypes (0x8847 for unicast, 0x8848 for multicast).
+
+   *  *Interface Enablement Requirement*: A node will only process or
+      forward MPLS frames on interfaces where MPLS forwarding is
+      explicitly enabled.
+
+   *  *Drop by Default*: If an MPLS-encapsulated packet is accidentally
+      transmitted across a domain boundary to an un-configured
+      interface, transit provider, or peering exchange, the receiving
+      hardware cannot parse the payload as native IP and discards the
+      frame at line rate.
+
+   Because the forwarding plane requires explicit protocol support and
+   state at each hop, MPLS fails closed in the presence of configuration
+   errors or interface miswiring.
+
+SRv6: Policy-Enforced Fail-Open Exposure
+
+   In contrast, SRv6 encapsulates domain-internal routing instructions
+   within standard IPv6 headers:
+
+   *  *Standard Layer-2 Demuxing*: SRv6 packets utilize standard IPv6
+      EtherType (0x86DD) and standard IPv6 Next Header values.
+
+   *  *Global Forwarding Compatibility*: Any standard IPv6 router along
+      a path will forward an SRv6 packet using ordinary routing
+      procedures on the IPv6 Destination Address, regardless of whether
+      that router participates in or recognizes Segment Routing.
+
+   *  *Reliance on Perimeter ACLs*: As described in Section 5 of
+      [RFC8754], preventing SRv6 packets from leaking outside the
+      trusted domain (or preventing external packets from injecting
+      unauthorized SIDs into the domain) requires strict, comprehensive
+      ingress and egress filtering at every perimeter boundary.
+
+   If an edge filter is omitted, truncated due to TCAM limits, or
+   temporarily removed during debugging, the network fails open: domain-
+   internal packets are forwarded across the public Internet, and
+   untrusted external entities may address internal function SIDs
+   directly.
 
 Authors' Addresses
 
