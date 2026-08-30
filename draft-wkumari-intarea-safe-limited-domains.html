@@ -11,15 +11,17 @@
 <meta content="Suresh Krishnan" name="author">
 <meta content="Donald Eastlake" name="author">
 <meta content='
-       Documents describing protocols that are only intended to be used within
-"limited domains" often do not clearly define how the boundary of the limited
-domain is implemented and enforced, or require that operators of these limited
-domains perfectly filter at all of the boundary nodes of the domain to
-protect the rest of the global Internet from these protocols and vice-versa. 
-       This document discusses some design principles and offers mechanisms to
-allow protocols that are designed to operate in a limited domain "fail-closed"
-rather than "fail-open", thereby making these protocols safer to deploy on the
-Internet. 
+       Documents describing protocols intended solely for use within "limited domains"
+often rely on edge filtering at every boundary node to prevent domain-internal
+traffic from leaking to the global Internet (and vice versa). Relying purely on
+administrative filtering creates "fail-open" designs that are susceptible to
+configuration errors, ACL bypass, and hardware table exhaustion. 
+       This document describes design principles and concrete mechanisms that allow
+limited-domain protocols to "fail-closed" by default. By leveraging Layer-2
+encapsulation identifiers (such as dedicated or extended EtherTypes),
+link-local address scoping, and / or Hop-Limit boundaries, protocol designers
+can significantly reduce the operational and security risks associated with
+limited domain protocols. 
        These mechanisms are not applicable to all protocols intended for use in a
 limited domain, but if implemented on certain classes of protocols, they  can
 significantly reduce the risks. 
@@ -1107,15 +1109,17 @@ svg {
 <h1 id="title">Safe(r) Limited Domains</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">Documents describing protocols that are only intended to be used within
-"limited domains" often do not clearly define how the boundary of the limited
-domain is implemented and enforced, or require that operators of these limited
-domains perfectly filter at all of the boundary nodes of the domain to
-protect the rest of the global Internet from these protocols and vice-versa.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
-<p id="section-abstract-2">This document discusses some design principles and offers mechanisms to
-allow protocols that are designed to operate in a limited domain "fail-closed"
-rather than "fail-open", thereby making these protocols safer to deploy on the
-Internet.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">Documents describing protocols intended solely for use within "limited domains"
+often rely on edge filtering at every boundary node to prevent domain-internal
+traffic from leaking to the global Internet (and vice versa). Relying purely on
+administrative filtering creates "fail-open" designs that are susceptible to
+configuration errors, ACL bypass, and hardware table exhaustion.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-2">This document describes design principles and concrete mechanisms that allow
+limited-domain protocols to "fail-closed" by default. By leveraging Layer-2
+encapsulation identifiers (such as dedicated or extended EtherTypes),
+link-local address scoping, and / or Hop-Limit boundaries, protocol designers
+can significantly reduce the operational and security risks associated with
+limited domain protocols.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
 <p id="section-abstract-3">These mechanisms are not applicable to all protocols intended for use in a
 limited domain, but if implemented on certain classes of protocols, they  can
 significantly reduce the risks.<a href="#section-abstract-3" class="pilcrow">¶</a></p>
