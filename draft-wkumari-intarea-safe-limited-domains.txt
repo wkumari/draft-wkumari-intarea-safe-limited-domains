@@ -4,14 +4,14 @@
 
 Internet Area Working Group                                    W. Kumari
 Internet-Draft                                               Google, LLC
-Intended status: Standards Track                               A. Alston
-Expires: 2 September 2026                                Alston Networks
+Intended status: Informational                                 A. Alston
+Expires: 3 March 2027                                    Alston Networks
                                                                É. Vyncke
                                                              S. Krishnan
                                                                    Cisco
                                                              D. Eastlake
                                                              Independent
-                                                            1 March 2026
+                                                          30 August 2026
 
 
                         Safe(r) Limited Domains
@@ -31,7 +31,7 @@ Abstract
    "fail-closed" rather than "fail-open", thereby making these protocols
    safer to deploy on the Internet.
 
-   These mechanism are not applicable to all protocols intended for use
+   These mechanisms are not applicable to all protocols intended for use
    in a limited domain, but if implemented on certain classes of
    protocols, they can significantly reduce the risks.
 
@@ -62,7 +62,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 2 September 2026.
+   This Internet-Draft will expire on 3 March 2027.
 
 Copyright Notice
 
@@ -149,10 +149,10 @@ Table of Contents
 
    This document discusses some of the mechanisms which protocol
    designers can use to limit the scope of their protocols to a single
-   link.  If the protocol is intended to be used in across multiple
-   links, but should not be forwarded beyond a single administrative
-   domain, then the protocol designer should consider making the
-   protocol "fail-closed" rather than "fail-open", as described below.
+   link.  If the protocol is intended to be used across multiple links,
+   but should not be forwarded beyond a single administrative domain,
+   then the protocol designer should consider making the protocol "fail-
+   closed" rather than "fail-open", as described below.
 
    This is primarily targeted towards protocols which are intended to
    primarily be used within a single layer-2 broadcast domain, or for
@@ -184,8 +184,8 @@ Table of Contents
 
    *  Transport type service (for example MPLS and SRv6): These
       protocols are intended to provide a transport service, and are
-      intended to remain within a single administrative domain such as a
-      Enterprise or a Service Provider network.
+      intended to remain within a single administrative domain such as
+      an Enterprise or a Service Provider network.
 
 4.  Fail-open versus Fail-closed
 
@@ -239,9 +239,9 @@ Table of Contents
    discard the packet when it reaches zero.
 
    The approach of setting the IP Hop-Limit to 1 ensures that the
-   protocol does leave the subnet.  This is different from requiring the
-   received IP Hop-Limit has a value of 255, as used in [RFC3682], which
-   ensures that traffic cannot be spoofed from outside the subnet.
+   protocol does not leave the subnet.  This is different from requiring
+   the received IP Hop-Limit has a value of 255, as used in [RFC3682],
+   which ensures that traffic cannot be spoofed from outside the subnet.
 
    Which option to choose (if either) depends on the specific
    requirements of the protocol.
@@ -254,8 +254,8 @@ Table of Contents
    providing a simple and effective way to limit the scope of the
    protocol.
 
-   In some (rare) cases, IPv4 "Link Local" addresses ([RFC3927] may be
-   an appropriate mechanism to limit the scope of the protocol, but this
+   In some (rare) cases, IPv4 "Link Local" addresses [RFC3927] may be an
+   appropriate mechanism to limit the scope of the protocol, but this
    such a niche case that it is not discussed further here.
 
 7.  IPv6 Link Local Addresses
@@ -287,7 +287,7 @@ Table of Contents
    type limited domain protocols (i.e., protocols running at layer 3).
    Higher layer protocols cannot necessarily be protected in this way,
    and so cryptographically enforced mechanisms may need to be used
-   instead (e.g., as done used by ANIMA in [RFC8994] and [RFC8995]).
+   instead (e.g., as done by ANIMA in [RFC8994] and [RFC8995]).
 
 9.  Ethernet Protocol Identification
 
