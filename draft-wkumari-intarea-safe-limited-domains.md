@@ -1,6 +1,6 @@
 ---
-title: "Fail-closed Limited Domains"
-abbrev: "fail-closed-limited-domains"
+title: "Safe(r) Limited Domains"
+abbrev: "safer-limited-domains"
 docname: draft-wkumari-intarea-safe-limited-domains-latest
 category: info
 submissionType: IETF
@@ -79,17 +79,16 @@ informative:
 
 Documents describing protocols intended solely for use within "limited domains"
 often rely on edge filtering at every boundary node to prevent domain-internal
-traffic from leaking to the global Internet (and vice versa). While edge
-filtering is a critical and standard operational practice, relying solely on
-administrative policies can create "fail-open" designs if configuration errors,
-ACL bypass, or hardware table limitations occur.
+traffic from leaking to the global Internet (and vice versa). Relying purely on
+administrative filtering creates "fail-open" designs that are susceptible to
+configuration errors, ACL bypass, and hardware table exhaustion.
 
 This document describes design principles and concrete mechanisms that allow
 limited-domain protocols to "fail-closed" by default. By leveraging Layer-2
-encapsulation identifiers (such as dedicated or extended EtherTypes), local
-address scoping, and / or Hop-Limit boundaries, protocol designers can provide
-robust defense-in-depth and significantly reduce the operational and security
-risks associated with limited-domain protocol leakage.
+encapsulation identifiers (such as dedicated or extended EtherTypes),
+link-local address scoping, and / or Hop-Limit boundaries, protocol designers
+can significantly reduce the operational and security risks associated with
+limited domain protocols.
 
 These mechanisms are not applicable to all protocols intended for use in a
 limited domain, but if implemented on certain classes of protocols, can
@@ -102,7 +101,7 @@ significantly reduce the risks.
 
 {{RFC8799}} discusses the concept of "limited domains", provides examples of
 limited domains, as well as Examples of Limited Domain Solutions, including
-Service Function Chaining (SFC {{RFC7665}}), Segment Routing, "Creative uses
+Service Function Chaining (SFC {{RFC7665}} ), Segment Routing, "Creative uses
 of IPv6 features" (including Extension headers, e.g., for in situ Operations,
 Administration, and maintenance {{RFC9378}}).
 
@@ -141,61 +140,77 @@ In addition, {{RFC8799}} Section 6, notes:
 > human configuration. We now discuss requirements for automating domain
 > creation and management.
 
-This document discusses some of the mechanisms which protocol designers can use
-to limit the scope of their protocols to a single link. If the protocol is
-intended to be used across multiple links, but should not be forwarded beyond a
-single administrative domain, then the protocol designer should consider making
-the protocol "fail-closed" rather than "fail-open", as described below.
+This document discusses some of the mechanisms which protocol designers can
+use to limit the scope of their protocols to a single link. If the protocol is
+intended to be used across multiple links, but should not be forwarded
+beyond a single administrative domain, then the protocol designer should
+consider making the protocol "fail-closed" rather than "fail-open", as
+described below.
+
+This is primarily targeted towards protocols which are intended to primarily be
+used within a single layer-2 broadcast domain, or for protocols which provide a
+transport type service (similar to MPLS or SRv6) and are not intended to remain
+within a single administrative domain.
 
 # Conventions and Definitions
 
 {::boilerplate bcp14-tagged}
 
-# Types of limited domain protocols
+# Some types of limited domain protocols
 
 {{RFC8799}} Section 3 discusses some examples of Limited Domains, based mainly
 on the network type (e.g. Home, Sensor Networks, Data Centers, etc).
 
-For the functional purposes of this document, limited-domain protocols can be
-categorized high-level into two broad groups (though some protocols may span or
-hybridize these categories):
+This section instead classifies the types of limited domain protocols based
+more on their intended use, and technology.
 
-* Layer-2 type limited domain protocols: These are protocols that are intended
-to be used within a single local-area network (LAN) segment or broadcast
-domain.
+Broadly speaking, there are two types of limited domain protocols:
 
-* Transport and infrastructure-type services: These protocols provide multi-hop
-transport or routing functionality, intended to remain strictly within a single
-administrative domain (such as an Enterprise or a Service Provider network).
+* Layer-2 type limited domain protocols: These are protocols that are
+intended to be used within a single LAN segment.
+
+* Transport type service (for example MPLS and SRv6): These protocols are
+intended to provide a transport service, and are intended to remain
+within a single administrative domain such as an Enterprise or a Service
+Provider network.
 
 # Fail-open versus Fail-closed
 
-Protocols can be classified based on how they behave when encountering an
-unconfigured interface or boundary.
+Protocols can be broadly classified as either "fail-open" or "fail-closed".
+Fail-closed protocols are those that require explicit interface or device-wide
+configuration to enable them to be accepted or processed when received on an
+interface.  A classic example of a fail-closed protocol is MPLS ({{RFC3031}}):
+In order to allow MPLS to transit an interface, the operator must enable the
+MPLS protocol on that interface and on the device itself.  This ensures that
+outside MPLS traffic does not leak in or out of the network / domain.
 
-"Fail-closed" protocols require explicit device or interface-wide configuration
-to enable them to be accepted, processed, or forwarded when received on an
-interface. If the protocol is not explicitly enabled on an interface, incoming
-packets of that protocol type are dropped or ignored by default. This design
-ensures that traffic does not transit across boundary nodes into networks where
-it is not supported or authorized.
+Fail-open protocols are those that require explicit configuration in order to
+ensure that they do not leak out of a domain, for example, through the
+application of filters.  An example of a fail-open protocol is SRv6 - in order
+to ensure that SRv6 traffic does not leak out of a network, the operator must
+explicitly filter this traffic, and, in order to ensure that SRv6 traffic does
+not leak in, the operator must explicitly filter SRv6 traffic.
 
-"Fail-open" protocols are those that rely on explicit configuration (such as
-filtering or Access Control Lists) at domain boundaries to *prevent* them from
-leaking. Without active filtering, standard forwarding hardware will parse and
-forward these packets normally across boundaries if the routing table allows
-it.
+Fail-open protocols are inherently riskier than fail-closed protocols, as they
+rely on perfect configuration of filters on all interfaces at the boundary of a
+domain, and, if the filters are removed for any reason (for example, during
+troubleshooting), there is a risk of inbound or outbound leaks.  In addition,
+some devices or interfaces may have limitations in the size and complexity of
+filters that can be applied, and so adding new filter entries to limit leaks of
+a new protocol may not be possible.
 
-While edge filtering is an essential tool, fail-open designs are inherently
-more susceptible to accidental configuration omissions, ACL resource
-exhaustion, or transient states during troubleshooting. Fail-closed protocols
-provide defense-in-depth by eliminating the dependency on boundary filters.
+Fail-closed protocols, on the other hand, do not require any explicit
+filtering.  In order for the protocol to be accepted and processed when
+received on an interface, the operator must explicitly enable the protocol on
+that interface and on the device itself.  In addition, there is less risk of
+operational mistakes, as it does not rely on filters that may be limited in
+number and complexity. Finally, fail-closed protocols do not require that
+operators of networks outside of the limited domain implement filters to
+protect their networks from the limited domain traffic.
 
-Note that a protocol may exhibit different containment properties at different
-points in the network. For example, a protocol may be designed to fail-closed
-at the boundary/edge of an administrative domain via interface-specific
-encapsulation configuration, even if it is forwarded natively in the core.
+# IP Hop-Limit Limiting
 
+-=-=-=-
 # IP Hop-Limit Limiting
 
 Some limited-domain protocols are intended to operate strictly within a single
@@ -211,55 +226,51 @@ verify that the sender is on-link and protect against off-link spoofing.
 Which option to choose (if either) depends on the specific requirements of the
 protocol.
 
-# IPv4 Local Multicast Addressing
+# IPv4 Multicast Addressing
 
-Some protocols (e.g. OSPF) use addresses from the IP Local Network Control
-Block {{RFC5771}} (224.0.0.0/24). In addition to providing a discovery
-mechanism, standard routers do not forward this traffic off-link, providing a
-simple and effective way to limit the scope of the protocol.
+Some protocols (e.g OSPF) use addresses from the IP Local Network Control
+Block {{RFC5771}}, (224.0.0/24). In addition to providing a discovery
+mechanism, this traffic is not forwarded off-link, providing a simple and
+effective way to limit the scope of the protocol.
 
-In some cases, IPv4 "Link Local" addresses {{RFC3927}} may be an appropriate
-mechanism to limit the scope of the protocol, but this is a niche case that is
-not discussed further here.
+In some (rare) cases, IPv4 "Link Local" addresses {{RFC3927}} may be an
+appropriate mechanism to limit the scope of the protocol, but this
+such a niche case that it is not discussed further here.
 
-# IPv6 Link Local and Multicast Addresses
+# IPv6 Link Local Addresses
 
 Link-Local IPv6 Unicast Addresses ({{RFC4291}} Section 2.5.6) are used for
 communication between nodes on a single link. They are not routable and are not
 forwarded by routers. In cases where a limited-domain protocol is intended to
-be used only within a single link, the use of IPv6 Link-Local addresses is an
-effective containment mechanism.
+be used only within a single link, the use of IPv6 Link-Local addresses can be
+an effective way to limit the scope of the protocol.
 
-Similarly, IPv6 Link-Local Multicast Addresses in the `ff02::/16` range
-({{RFC4291}} Section 2.7) are restricted to the local link scope and are not
-forwarded by routers, providing a reliable on-link multicast discovery and
-communication channel.
 
 # Making a layer-3 type limited-domain protocol fail-closed
 
 One way to make a limited-domain protocol fail-closed is to assign it a unique
-layer-2 protocol identifier, usually an EtherType. In modern router and host
-interfaces, if a specific Layer-2 protocol identifier is not administratively
-enabled on that port, the network interface card or chipset will ignore the
-frame.
+layer-2 protocol identifier, usually an EtherType. This mechanism is used by
+MPLS.  In modern router and hosts, if such a protocol identifier is not enabled
+on an interface, then the Ethernet chip-set will ignore the frame, and the node
+will not see or process it. Thus, it is necessary to specifically enable the
+layer-2 protocol identifier on all relevant interfaces inside the limited
+domain, and the protocol will be blocked at the domain boundary where the
+protocol has not been so enabled. This is a simple and effective mechanism to
+ensure that the protocol does not leak out of the limited domain if and when an
+operator makes a mistake in configuring filters based on identifiers appearing
+deeper in the frame such as IP addresses or IP protocol or header options.
 
-Thus, the protocol must be explicitly enabled on all relevant interfaces inside
-the domain, automatically blocking it at the domain boundary where the protocol
-has not been enabled. This is a robust and simple mechanism that ensures the
-protocol does not leak out of the limited domain, even if an operator makes a
-mistake in configuring filters based on identifiers appearing deeper in the
-packet (such as IP addresses, IP protocols, or header options).
-
-A Layer-2 protocol identifier is a powerful tool, but it is not the only option
-for fail-closed designs, and protocol designers should evaluate it alongside
-other mechanisms such as local address scoping, hop-limit boundaries, and
-cryptographic mechanisms depending on the target environment.
+This layer-2 protocol identifier technique only works for transport-type
+limited domain protocols (i.e., protocols running at layer 3).  Higher layer
+protocols cannot necessarily be protected in this way, and so cryptographically
+enforced mechanisms may need to be used instead (e.g., as done by ANIMA in
+{{RFC8994}} and {{RFC8995}}).
 
 # Ethernet Protocol Identification
 
 Figure 1 shows the general format of Ethernet frames. The relevant protocol
 identification field occurs after the destination and source MAC addresses and
-any tags (such as VLAN tags). The alternatives for protocol identification are
+any tags (such a VLAN tags). The alternatives for protocol identification are
 discussed in Section 3 of {{RFC9542}}.
 
     +-----------+-----------+- - - - +----------+--------- - - -+-------+
@@ -307,37 +318,55 @@ than a specific dedicated EtherType.
 
 ### Hardware Forwarding Considerations
 
-While Extended EtherTypes ({{RFC9542}}) solve namespace exhaustion, protocol
-designers should remain mindful of hardware parsing pipelines. High-throughput
-switching ASICs are heavily optimized to parse standard 16-bit Layer-2
-EtherTypes at line rate within a fixed-depth initial parsing window.
+While Extended EtherTypes ({{RFC9542}}) solve the namespace exhaustion
+issue for 16-bit EtherTypes, protocol designers must remain mindful of
+hardware parsing pipeline constraints.
 
-Variable-length or extended EtherType encapsulations (such as 8-octet Extended
-EtherTypes) can introduce forwarding trade-offs on certain switching silicon:
-* Parser Depth: Some hardware engines cannot parse beyond a fixed offset in a
-  single pass, potentially triggering packet recirculation or forcing packets
-  to a slower exception path.
-* Flow Matching: Access Control Lists (ACLs) and flow-match engines often have
-  native 16-bit EtherType primitives. Matching on an OUI plus extended ID may
-  consume extra TCAM resources.
+High-throughput "merchant silicon" and network processor ASICs are heavily
+optimized to parse standard 16-bit Layer-2 EtherTypes at line rate within a
+fixed-depth initial parsing window. In contrast, variable-length or extended
+EtherType encapsulations (e.g., SNAP headers or 8-octet Extended EtherTypes)
+can introduce forwarding trade-offs on certain switching silicon:
+
+* **Parser Depth and Recirculation**: Some existing hardware engines cannot
+  parse beyond a fixed offset in a single pass. Having an Extended
+  EtherType before inner headers may trigger packet recirculation or
+  force packets into a slower software/microcode exception path.
+* **TCAM and Flow Matching**: Many Access Control Lists (ACLs) and flow-match
+  engines have native primitives for matching 16-bit EtherTypes (e.g., IPv4,
+  IPv6, MPLS), whereas matching on an OUI plus extended protocol ID may consume
+  multiple TCAM lookups, or exceed key-generation capabilities.
+
+Protocol designers should therefore balance the scarcity of standard 16-bit
+EtherTypes against the line-rate hardware parsing requirements of high-speed
+transit nodes.
+
 
 ## Specific EtherType Protocol Identification
 
 The primary disadvantage of using a specific EtherType, as opposed to an
 Extended EtherType, is that assignment of such an EtherType is significantly
-more difficult. As discussed in {{RFC9542}}, a specific EtherType can only be
-assigned by the IEEE Registration Authority under the following policy: "Since
-EtherTypes are a fairly scarce resource, the IEEE RAC has let us know that they
-will not assign a new EtherType to a new IETF protocol specification until the
-IESG has approved the protocol specification for publication as an RFC."
-({{RFC9542}} Appendix B.1, citing {{IESG_EtherType}})
+more difficult than assignment of an Extended EtherType IANA protocol number.
+As discussed in {{RFC9542}}, a specific EtherType can only be assigned by the
+IEEE Registration Authority under the following policy: "Since EtherTypes are a
+fairly scarce resource, the IEEE RAC has let us know that they will not assign
+a new EtherType to a new IETF protocol specification until the IESG has
+approved the protocol specification for publication as an RFC.  In exceptional
+cases, the IEEE RA is willing to consider "early allocation" of an EtherType
+for an IETF protocol that is still under development as long as the request
+comes from and has been vetted by the IESG." ({{RFC9542}} Appendix B.1, citing
+{{IESG_EtherType}})
 
 During development and testing, a protocol can use a "Local Experimental
-Ethertype" (0x88b5 and 0x88b6 - {{IANA_EtherType}}). Once approved, the IESG
-can request an EtherType from the IEEE.
+Ethertype" (0x88b5 and 0x88b6 - {{IANA_EtherType}}).  Once the protocol is
+approved for publication, the IESG can request an EtherType from the IEEE.
+However, there is always a risk of some implementation using a Local
+Experimental EtherType not getting updated causing conflicts with a later
+different use of that experimental EtherType.
 
 The primary advantage of using a specific EtherType is the saving of 5 bytes
-relative to the use of the Extended EtherType.
+relative to the use of the Extended EtherType with a protocol number under the
+IANA OUI.
 
 
 # Non-Ethernet Encapsulations and Layer-3 Overlays
@@ -352,9 +381,9 @@ same fundamental tension between fail-open and fail-closed designs applies:
 
 ## The Fragility of IP-Level Filtering in Overlays
 
-Tunneling limited-domain traffic inside standard unicast IP/UDP packets without
-domain-specific transport identifiers exposes the traffic to the same leakage
-risks as native IP:
+Tunneling limited-domain traffic inside standard unicast IP/UDP
+packets without domain-specific transport identifiers exposes the traffic to
+the same leakage risks as native IP:
 
 1. **Routability by Default**: If an inner packet is encapsulated in a standard
    UDP/IP header destined for an IP address that leaks into the global routing
@@ -365,31 +394,16 @@ risks as native IP:
    traffic and sensitive limited-domain control payloads.
 
 
-# Alternative Isolation Mechanisms
-
-This layer-2 protocol identifier technique discussed in Section 8 is primarily
-effective for transport-type limited-domain protocols running directly at Layer
-3. Higher-layer protocols or those running on top of complex routing substrates
-may not be easily protectable via Layer-2 EtherTypes.
-
-In such scenarios, alternative isolation methods must be considered. These
-include cryptographically enforced containment and automated control-plane
-isolation, such as the mechanisms standardized by ANIMA in {{RFC8994}} and
-{{RFC8995}}, where domain boundaries are enforced through secure cryptographic
-handshakes and mutual trust verification.
-
-
 # Security Considerations
 
-Protocols are designated as "limited domain" because unexpected security issues
-might arise if they leak outside of a unified management domain. For example,
-VLAN, VPN, or overlay identifiers may be misinterpreted, resulting in the
-delivery of data to (or acceptance of data from) unauthorized network nodes.
-
-Implementing a "fail-closed" boundary via Layer-2 protocol identifiers, strict
-link-local address scoping, or Hop-Limit boundaries significantly improves
-security by ensuring that unconfigured or external nodes drop the traffic by
-default, preventing unintended leakage and misinterpretation.
+Protocols are designated as "limited domain" because something unexpected might
+happen if they leak outside of a domain with unified management. For example,
+VLAN or VPN or overlay identifiers may be misinterpreted resulting in the
+delivery of data to or the acceptance of data from unauthorized network nodes
+violating intended security constraints. The use of a layer-2 protocol
+identifier to provide a "fail closed" barrier at the domain border can
+significantly improve security by eliminating the opportunity for such
+misinterpretation.
 
 
 # IANA Considerations
@@ -401,7 +415,7 @@ This document has no IANA actions.
 # Acknowledgments
 {:numbered="false"}
 
-Much thanks to Deborah Brungard and Brian Carpenter for their review and
+Much thanks to Deborah Brungard and Brian Carpenter, for their review and
 comments.
 
 Also much thanks to everyone else with whom we have discussed this topic; I've
@@ -410,20 +424,6 @@ forgotten some of them. Apologies if you were one of them.
 
 # Changelog
 {:numbered="false"}
-* - 02-08:
-  * Title changed to "Fail-closed Limited Domains".
-  * Abstract updated to reframe edge filtering as a positive, standard
-    practice.
-  * Section 3 updated to qualify categorization.
-  * Removed Appendix A comparing MPLS/SRv6 to avoid direct protocol-specific
-    comparisons.
-  * Added Section 7 detailing IPv6 Link-Local Multicast scoping (`ff02::/16`).
-  * Moved cryptographic/higher-layer discussion out of Section 8 into a new
-    Section 11.
-  * Streamlined hardware considerations in Section 9.1.1.
-  * Added clarifying language regarding fail-closed design options and boundary
-    behaviors.
-
 * - 02-07:
   * Add Security Considerations text about the risks of fail-open protocols and
     the benefits of fail-closed protocols.
@@ -442,7 +442,55 @@ forgotten some of them. Apologies if you were one of them.
     Extended EtherType protocol identification.
   * Add initial Security Considerations text.
 
+
 * 00-01:
   * Deborah pointed out that "this only works for transport-type limited domain
     protocols (e.g., SRv6)" could be read as SRv6 fails-closed.
 
+# Appendix A: Structural vs. Policy-Enforced Boundaries (MPLS vs. SRv6)
+{:numbered="false"}
+
+To illustrate the difference between fail-open and fail-closed designs,
+consider MPLS and Segment Routing over IPv6 (SRv6, {{RFC8754}}).
+
+## MPLS: Structural Fail-Closed Isolation
+{:numbered="false"}
+
+MPLS provides an automatic fail-closed boundary by virtue of its Layer-2
+encapsulation:
+
+* **Distinct Protocol Identifier**: MPLS frames utilize dedicated EtherTypes
+  (0x8847 for unicast, 0x8848 for multicast).
+* **Interface Enablement Requirement**: A node will only process or forward
+  MPLS frames on interfaces where MPLS forwarding is explicitly enabled.
+* **Drop by Default**: If an MPLS-encapsulated packet is accidentally
+  transmitted across a domain boundary to an un-configured interface, transit
+  provider, or peering exchange, the receiving hardware cannot parse the
+  payload as native IP and discards the frame at line rate.
+
+Because the forwarding plane requires explicit protocol support and state at
+each hop, MPLS fails closed in the presence of configuration errors or
+interface miswiring.
+
+## SRv6: Policy-Enforced Fail-Open Exposure
+{:numbered="false"}
+
+In contrast, SRv6 encapsulates domain-internal routing instructions within
+standard IPv6 headers:
+
+* **Standard Layer-2 Demuxing**: SRv6 packets utilize standard IPv6 EtherType
+  (0x86DD) and standard IPv6 Next Header values.
+* **Global Forwarding Compatibility**: Any standard IPv6 router along a path
+  will forward an SRv6 packet using ordinary routing procedures on the IPv6
+  Destination Address, regardless of whether that router participates in or
+  recognizes Segment Routing.
+* **Reliance on Perimeter ACLs**: As described in Section 5 of {{RFC8754}},
+  preventing SRv6 packets from leaking outside the trusted domain (or
+  preventing external packets from injecting unauthorized SIDs into the domain)
+  requires strict, comprehensive ingress and egress filtering at every
+  perimeter boundary.
+
+If an edge filter is omitted, truncated due to TCAM limits, or temporarily
+removed during debugging, the network fails open: domain-internal packets are
+forwarded across the public Internet, and untrusted external entities may
+address internal function SIDs directly.
