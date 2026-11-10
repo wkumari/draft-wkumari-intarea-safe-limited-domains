@@ -191,11 +191,6 @@ more susceptible to accidental configuration omissions, ACL resource
 exhaustion, or transient states during troubleshooting. Fail-closed protocols
 provide defense-in-depth by eliminating the dependency on boundary filters.
 
-Note that a protocol may exhibit different containment properties at different
-points in the network. For example, a protocol may be designed to fail-closed
-at the boundary/edge of an administrative domain via interface-specific
-encapsulation configuration, even if it is forwarded natively in the core.
-
 # IP Hop-Limit Limiting
 
 Some limited-domain protocols are intended to operate strictly within a single
@@ -253,7 +248,7 @@ packet (such as IP addresses, IP protocols, or header options).
 A Layer-2 protocol identifier is a powerful tool, but it is not the only option
 for fail-closed designs, and protocol designers should evaluate it alongside
 other mechanisms such as local address scoping, hop-limit boundaries, and
-cryptographic mechanisms depending on the target environment.
+cryptographic mechanisms, depending on the target environment.
 
 # Ethernet Protocol Identification
 
@@ -312,8 +307,8 @@ designers should remain mindful of hardware parsing pipelines. High-throughput
 switching ASICs are heavily optimized to parse standard 16-bit Layer-2
 EtherTypes at line rate within a fixed-depth initial parsing window.
 
-Variable-length or extended EtherType encapsulations (such as 8-octet Extended
-EtherTypes) can introduce forwarding trade-offs on certain switching silicon:
+8-octet Extended EtherType or variable-length encapsulations can introduce
+forwarding trade-offs on certain switching silicon:
 * Parser Depth: Some hardware engines cannot parse beyond a fixed offset in a
   single pass, potentially triggering packet recirculation or forcing packets
   to a slower exception path.
