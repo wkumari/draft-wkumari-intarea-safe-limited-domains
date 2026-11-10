@@ -5,13 +5,13 @@
 Internet Area Working Group                                    W. Kumari
 Internet-Draft                                               Google, LLC
 Intended status: Informational                                 A. Alston
-Expires: 16 April 2027                                   Alston Networks
+Expires: 14 May 2027                                     Alston Networks
                                                                É. Vyncke
                                                              S. Krishnan
                                                                    Cisco
                                                              D. Eastlake
                                                              Independent
-                                                         13 October 2026
+                                                        10 November 2026
 
 
                       Fail-closed Limited Domains
@@ -66,7 +66,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 16 April 2027.
+   This Internet-Draft will expire on 14 May 2027.
 
 Copyright Notice
 
@@ -214,12 +214,6 @@ Table of Contents
    Fail-closed protocols provide defense-in-depth by eliminating the
    dependency on boundary filters.
 
-   Note that a protocol may exhibit different containment properties at
-   different points in the network.  For example, a protocol may be
-   designed to fail-closed at the boundary/edge of an administrative
-   domain via interface-specific encapsulation configuration, even if it
-   is forwarded natively in the core.
-
 5.  IP Hop-Limit Limiting
 
    Some limited-domain protocols are intended to operate strictly within
@@ -282,7 +276,7 @@ Table of Contents
    A Layer-2 protocol identifier is a powerful tool, but it is not the
    only option for fail-closed designs, and protocol designers should
    evaluate it alongside other mechanisms such as local address scoping,
-   hop-limit boundaries, and cryptographic mechanisms depending on the
+   hop-limit boundaries, and cryptographic mechanisms, depending on the
    target environment.
 
 9.  Ethernet Protocol Identification
@@ -348,14 +342,14 @@ Table of Contents
    parse standard 16-bit Layer-2 EtherTypes at line rate within a fixed-
    depth initial parsing window.
 
-   Variable-length or extended EtherType encapsulations (such as 8-octet
-   Extended EtherTypes) can introduce forwarding trade-offs on certain
-   switching silicon: * Parser Depth: Some hardware engines cannot parse
-   beyond a fixed offset in a single pass, potentially triggering packet
-   recirculation or forcing packets to a slower exception path. * Flow
-   Matching: Access Control Lists (ACLs) and flow-match engines often
-   have native 16-bit EtherType primitives.  Matching on an OUI plus
-   extended ID may consume extra TCAM resources.
+   8-octet Extended EtherType or variable-length encapsulations can
+   introduce forwarding trade-offs on certain switching silicon: *
+   Parser Depth: Some hardware engines cannot parse beyond a fixed
+   offset in a single pass, potentially triggering packet recirculation
+   or forcing packets to a slower exception path. * Flow Matching:
+   Access Control Lists (ACLs) and flow-match engines often have native
+   16-bit EtherType primitives.  Matching on an OUI plus extended ID may
+   consume extra TCAM resources.
 
 9.2.  Specific EtherType Protocol Identification
 
