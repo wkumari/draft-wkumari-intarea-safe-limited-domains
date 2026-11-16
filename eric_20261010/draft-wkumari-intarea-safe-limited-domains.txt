@@ -5,13 +5,13 @@
 Internet Area Working Group                                    W. Kumari
 Internet-Draft                                               Google, LLC
 Intended status: Informational                                 A. Alston
-Expires: 14 May 2027                                     Alston Networks
+Expires: 20 May 2027                                     Alston Networks
                                                                É. Vyncke
                                                              S. Krishnan
                                                                    Cisco
                                                              D. Eastlake
                                                              Independent
-                                                        10 November 2026
+                                                        16 November 2026
 
 
                       Fail-closed Limited Domains
@@ -66,7 +66,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 May 2027.
+   This Internet-Draft will expire on 20 May 2027.
 
 Copyright Notice
 
@@ -177,8 +177,8 @@ Table of Contents
    etc).
 
    For the functional purposes of this document, limited-domain
-   protocols can be categorized high-level into two broad groups (though
-   some protocols may span or hybridize these categories):
+   protocols can be categorized at a high-level into two broad groups
+   (though some protocols may span categories):
 
    *  Layer-2 type limited domain protocols: These are protocols that
       are intended to be used within a single local-area network (LAN)
