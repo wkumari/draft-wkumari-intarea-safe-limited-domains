@@ -157,8 +157,8 @@ the protocol "fail-closed" rather than "fail-open", as described below.
 on the network type (e.g. Home, Sensor Networks, Data Centers, etc).
 
 For the functional purposes of this document, limited-domain protocols can be
-categorized high-level into two broad groups (though some protocols may span or
-hybridize these categories):
+categorized at a high-level into two broad groups (though some protocols may span
+categories):
 
 * Layer-2 type limited domain protocols: These are protocols that are intended
 to be used within a single local-area network (LAN) segment or broadcast
